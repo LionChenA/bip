@@ -1,5 +1,5 @@
 ## 1. Core Infrastructure
-- [x] 1.1 Implement Theme Provider/Script (Light/Dark/System) with `localStorage` persistence.
+- [x] 1.1 Implement Theme Provider/Script (Light/Dark/System) with `localStorage` persistence and system listener.
 - [x] 1.2 Update `BaseLayout` to include Theme Script and `<ClientRouter />`.
 - [x] 1.3 Configure Tailwind v4 for dark mode strategy.
 
