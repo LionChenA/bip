@@ -36,8 +36,10 @@ const portfolio = defineCollection({
     image: z.string().optional(),
     link: z.string().url().optional(),
     tags: z.array(z.string()).default([]),
+    stack: z.array(z.string()).default([]),
     lang: z.enum(['en', 'zh']).default('en'),
     sortOrder: z.number().default(0),
+    featured: z.boolean().default(false),
   }),
 });
 
