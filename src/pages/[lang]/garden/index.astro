@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en' } },
+    { params: { lang: 'zh' } },
+  ];
+}
+
+const { lang } = Astro.params;
+---
+
+<BaseLayout title="Garden" lang={lang}>
+  <div class="prose dark:prose-invert mx-auto">
+    <h1>Digital Garden</h1>
+    <p class="lead">A collection of evolving ideas and notes.</p>
+    
+    <div class="mt-8 p-12 border border-dashed rounded-lg text-center text-muted-foreground bg-muted/50">
+      <p>Content coming soon...</p>
+    </div>
+  </div>
+</BaseLayout>

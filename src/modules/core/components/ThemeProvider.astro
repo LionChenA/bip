@@ -1,0 +1,53 @@
+<script is:inline>
+  // 1. Core Logic: Get the effective theme (light/dark) based on preference
+  const getEffectiveTheme = (preference) => {
+    if (preference === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return preference;
+  };
+
+  // 2. Apply theme to document
+  const applyTheme = (preference) => {
+    const effectiveTheme = getEffectiveTheme(preference);
+    
+    // Toggle 'dark' class
+    if (effectiveTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    // Persist preference (not effective theme) to localStorage
+    // Use 'theme-preference' key to store 'light' | 'dark' | 'system'
+    localStorage.setItem('theme-preference', preference);
+    
+    // Update data attribute for React components to sync state
+    document.documentElement.setAttribute('data-theme', preference);
+  };
+
+  // 3. System Theme Listener
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const handleSystemChange = () => {
+    const currentPreference = localStorage.getItem('theme-preference') || 'system';
+    if (currentPreference === 'system') {
+      applyTheme('system');
+    }
+  };
+
+  // Remove existing listener to prevent duplicates (in case of re-execution)
+  mediaQuery.removeEventListener('change', handleSystemChange);
+  mediaQuery.addEventListener('change', handleSystemChange);
+
+  // 4. Initialization
+  const initTheme = () => {
+    const savedPreference = localStorage.getItem('theme-preference') || 'system';
+    applyTheme(savedPreference);
+  };
+
+  // Run on initial load
+  initTheme();
+
+  // Run on View Transitions (Astro specific)
+  document.addEventListener('astro:after-swap', initTheme);
+</script>
