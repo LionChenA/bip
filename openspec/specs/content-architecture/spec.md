@@ -1,7 +1,8 @@
-# Content Architecture Spec
+# content-architecture Specification
 
-## ADDED Requirements
-
+## Purpose
+TBD - created by archiving change implement-garden-core. Update Purpose after archive.
+## Requirements
 ### Requirement: Garden Collection
 The system MUST support a `garden` content collection to replace the legacy `blog`.
 
@@ -23,12 +24,3 @@ The build process MUST generate a bidirectional link index.
 - **And** it MUST aggregate these references into a data structure mapping `target_slug` to `source_slug` (and context/title if possible)
 - **And** this data MUST be available to the runtime (e.g., as `backlinks.json` or a build-time import) to display "Linked References" on note pages.
 
-## REMOVED Requirements
-
-### Requirement: Blog Collection
-The `blog` collection is deprecated.
-
-#### Scenario: Removing Legacy Blog
-- **Given** the existing `blog` collection
-- **When** the new `garden` is fully implemented
-- **Then** the `blog` definition in `config.ts` MUST be removed or aliased to `garden` for backward compatibility during migration.
