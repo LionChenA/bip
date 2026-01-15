@@ -23,6 +23,10 @@
     "Astro docs": {
       "type": "remote",
       "url": "https://mcp.docs.astro.build/mcp"
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
     }
   }
 }
