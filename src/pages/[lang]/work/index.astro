@@ -1,5 +1,7 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
+import { WorkPage } from '../../../modules/portfolio/components/WorkPage';
 
 export function getStaticPaths() {
   return [
@@ -9,15 +11,23 @@ export function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
+
+const projects = await getCollection('portfolio', ({ data }) => {
+  return data.lang === lang;
+});
+
+const sortedProjects = projects.sort((a, b) => a.data.sortOrder - b.data.sortOrder);
 ---
 
 <BaseLayout title="Work" lang={lang}>
-  <div class="prose dark:prose-invert mx-auto">
-    <h1>Work & Projects</h1>
-    <p class="lead">Selected works and case studies.</p>
-    
-    <div class="mt-8 p-12 border border-dashed rounded-lg text-center text-muted-foreground bg-muted/50">
-      <p>Content coming soon...</p>
+  <div class="container mx-auto px-4 py-12">
+    <div className="mb-12 text-center space-y-4">
+      <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Work & Projects</h1>
+      <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        Selected works, case studies, and technical experiments.
+      </p>
     </div>
+    
+    <WorkPage client:load projects={sortedProjects} />
   </div>
 </BaseLayout>

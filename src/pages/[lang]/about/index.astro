@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
+import { AboutContent } from '../../../modules/about/components/AboutContent';
 
 export function getStaticPaths() {
   return [
@@ -12,12 +13,12 @@ const { lang } = Astro.params;
 ---
 
 <BaseLayout title="About" lang={lang}>
-  <div class="prose dark:prose-invert mx-auto">
-    <h1>About Me</h1>
-    <p class="lead">Designer, developer, and creator.</p>
-    
-    <div class="mt-8 p-12 border border-dashed rounded-lg text-center text-muted-foreground bg-muted/50">
-      <p>Content coming soon...</p>
+  <div class="container mx-auto px-4 py-12">
+    <div className="mb-16 text-center space-y-4">
+      <h1 className="text-4xl md:text-5xl font-bold tracking-tight">About Me</h1>
+      <p className="text-xl text-muted-foreground">Designer, developer, and creator.</p>
     </div>
+    
+    <AboutContent client:load />
   </div>
 </BaseLayout>
