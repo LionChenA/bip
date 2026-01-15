@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../../modules/core/layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('garden');
+  const uniqueTags = new Set<string>();
+  
+  allPosts.forEach(post => {
+      post.data.tags.forEach(tag => { uniqueTags.add(tag); });
+  });
+
+  const paths = [];
+  for (const tag of uniqueTags) {
+      paths.push({ params: { lang: 'en', tag }, props: { tag } });
+      paths.push({ params: { lang: 'zh', tag }, props: { tag } });
+  }
+  return paths;
+}
+
+const { lang, tag } = Astro.params;
+const posts = await getCollection('garden', ({ data }) => {
+    return data.lang === lang && data.tags.includes(tag);
+});
+
+// Sort by date
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title={`Tag: #${tag}`} lang={lang}>
+  <div class="container mx-auto px-4 py-12 max-w-3xl">
+    <div class="mb-12">
+       <div class="text-sm text-muted-foreground mb-2 uppercase tracking-wider font-medium">Topic</div>
+       <h1 class="text-4xl font-bold tracking-tight">#{tag}</h1>
+       <p class="text-muted-foreground mt-2">{posts.length} notes</p>
+    </div>
+    
+    <div class="space-y-4">
+        {sortedPosts.map(post => (
+            <a href={`/${lang}/garden/${post.slug}`} class="block group p-6 border rounded-xl hover:border-primary/50 bg-card hover:bg-muted/5 transition-all">
+                <div class="flex justify-between items-baseline mb-2">
+                    <h2 class="text-xl font-bold group-hover:text-primary transition-colors">{post.data.title}</h2>
+                    <span class="text-sm text-muted-foreground font-mono shrink-0">
+                        {post.data.pubDate.toLocaleDateString(lang === 'en' ? 'en-US' : 'zh-CN')}
+                    </span>
+                </div>
+                {post.data.description && (
+                    <p class="text-muted-foreground line-clamp-2">{post.data.description}</p>
+                )}
+                <div class="flex gap-2 mt-4">
+                    {post.data.tags.filter(t => t !== tag).map(t => (
+                        <span class="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground">{t}</span>
+                    ))}
+                </div>
+            </a>
+        ))}
+    </div>
+  </div>
+</BaseLayout>

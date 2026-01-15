@@ -8,13 +8,16 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkToc from 'remark-toc';
 
+import sitemap from '@astrojs/sitemap';
+
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://bip.dev',
   vite: {
       plugins: [tailwindcss()],
-	},
+    },
 
-  integrations: [react()],
+  integrations: [react(), sitemap()],
   markdown: {
     remarkPlugins: [remarkMath, remarkToc],
     rehypePlugins: [rehypeKatex],
