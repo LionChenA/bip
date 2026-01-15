@@ -26,6 +26,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.8)
+      animejs:
+        specifier: ^4.2.2
+        version: 4.2.2
       astro:
         specifier: ^5.16.9
         version: 5.16.9(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.55.1)(typescript@5.9.3)
@@ -54,6 +57,9 @@ importers:
         specifier: ^4.1.18
         version: 4.1.18
     devDependencies:
+      '@types/animejs':
+        specifier: ^3.1.13
+        version: 3.1.13
       '@types/canvas-confetti':
         specifier: ^1.9.0
         version: 1.9.0
@@ -788,6 +794,9 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7
 
+  '@types/animejs@3.1.13':
+    resolution: {integrity: sha512-yWg9l1z7CAv/TKpty4/vupEh24jDGUZXv4r26StRkpUPQm04ztJaftgpto8vwdFs8SiTq6XfaPKCSI+wjzNMvQ==}
+
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
 
@@ -859,6 +868,9 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  animejs@4.2.2:
+    resolution: {integrity: sha512-Ys3RuvLdAeI14fsdKCQy7ytu4057QX6Bb7m4jwmfd6iKmUmLquTwk1ut0e4NtRQgCeq/s2Lv5+oMBjz6c7ZuIg==}
 
   ansi-align@3.0.1:
     resolution: {integrity: sha512-IOfwwBF5iczOjp/WeY4YxyjqAFMQoZufdQWDd19SEExbVLNXqvpzSJ/M7Za4/sCPmQ0+GRquoA7bGcINcxew6w==}
@@ -2791,6 +2803,8 @@ snapshots:
       tailwindcss: 4.1.18
       vite: 6.4.1(jiti@2.6.1)(lightningcss@1.30.2)
 
+  '@types/animejs@3.1.13': {}
+
   '@types/babel__core@7.20.5':
     dependencies:
       '@babel/parser': 7.28.6
@@ -2871,6 +2885,8 @@ snapshots:
       acorn: 8.15.0
 
   acorn@8.15.0: {}
+
+  animejs@4.2.2: {}
 
   ansi-align@3.0.1:
     dependencies:
