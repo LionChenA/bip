@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Timeline } from './Timeline';
 import { FilterBar } from './FilterBar';
@@ -44,6 +44,20 @@ export function GardenList({ lang = 'en' }: { lang?: string }) {
       setFilteredItems(items.filter(i => i.type === filter));
     }
   }, [filter, items]);
+
+  const groupedItems = useMemo(() => {
+    const grouped: Record<string, Record<string, GardenItem[]>> = {};
+    filteredItems.forEach(item => {
+      const date = new Date(item.pubDate);
+      const year = date.getFullYear().toString();
+      const month = date.toLocaleString('default', { month: 'short' });
+      
+      if (!grouped[year]) grouped[year] = {};
+      if (!grouped[year][month]) grouped[year][month] = [];
+      grouped[year][month].push(item);
+    });
+    return grouped;
+  }, [filteredItems]);
 
   useEffect(() => {
     const handlePopState = () => {
