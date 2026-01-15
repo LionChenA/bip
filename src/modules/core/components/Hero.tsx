@@ -30,7 +30,14 @@ export const Hero: React.FC<HeroProps> = ({
     for (let i = 0; i < total; i++) {
       const item = document.createElement('div');
       item.classList.add('grid-item');
-      item.style.opacity = '0.1';
+      item.style.cssText = `
+        width: 100%;
+        height: 100%;
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        opacity: 0.3;
+        transition: opacity 0.3s, background-color 0.3s;
+      `;
       gridEl.appendChild(item);
     }
 
@@ -111,14 +118,6 @@ export const Hero: React.FC<HeroProps> = ({
             gridTemplateRows: 'repeat(var(--rows), 1fr)'
         }}
       >
-        <style>{`
-          .grid-item {
-            width: 100%;
-            height: 100%;
-            border: 1px solid var(--border);
-            border-radius: 2px;
-          }
-        `}</style>
       </div>
 
       {/* Foreground Content */}
