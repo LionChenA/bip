@@ -13,6 +13,21 @@ const blog = defineCollection({
   }),
 });
 
+const garden = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    lastGroomed: z.coerce.date().optional(),
+    heroImage: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    lang: z.enum(['en', 'zh']).default('en'),
+    type: z.enum(['evergreen', 'literature', 'article']).default('article'),
+  }),
+});
+
 const portfolio = defineCollection({
   type: 'content',
   schema: z.object({
@@ -26,4 +41,4 @@ const portfolio = defineCollection({
   }),
 });
 
-export const collections = { blog, portfolio };
+export const collections = { blog, portfolio, garden };

@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "evergreen-note",
+    "title": "Evergreen Note",
+    "pubDate": "2024-04-20",
+    "type": "evergreen",
+    "description": "This is a note that grows over time.",
+    "lang": "en"
+  },
+  {
+    "slug": "hello-garden",
+    "title": "Hello Digital Garden",
+    "pubDate": "2024-05-01",
+    "type": "article",
+    "description": "Welcome to my digital garden.",
+    "lang": "en"
+  },
+  {
+    "slug": "reading-notes",
+    "title": "Reading Notes: Design Patterns",
+    "pubDate": "2024-04-15",
+    "type": "literature",
+    "description": "Notes on software design patterns.",
+    "lang": "en"
+  }
+]

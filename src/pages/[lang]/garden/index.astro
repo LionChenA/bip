@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
+import { GardenList } from '../../../components/garden/GardenList';
 
 export function getStaticPaths() {
   return [
@@ -12,12 +13,5 @@ const { lang } = Astro.params;
 ---
 
 <BaseLayout title="Garden" lang={lang}>
-  <div class="prose dark:prose-invert mx-auto">
-    <h1>Digital Garden</h1>
-    <p class="lead">A collection of evolving ideas and notes.</p>
-    
-    <div class="mt-8 p-12 border border-dashed rounded-lg text-center text-muted-foreground bg-muted/50">
-      <p>Content coming soon...</p>
-    </div>
-  </div>
+  <GardenList client:load lang={lang} />
 </BaseLayout>
