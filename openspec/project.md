@@ -35,6 +35,9 @@ The site serves as a professional identity hub for a developer/engineer.
   - Content: `src/content/{collection}/{lang}/` (e.g., `src/content/blog/zh/my-post.md`).
 
 ### Architecture Patterns
+- **Navigation**:
+  - **Global Header**: Present on all pages with Logo, Links (Home, Garden, Work, About), and Utility controls (Theme, Lang).
+  - **Language Switcher**: Switch between EN/ZH preserving the current path.
 - **Routing**:
   - `src/pages/[lang]/...` for localized routes.
   - `src/pages/index.astro` redirects or handles default locale.
@@ -49,9 +52,9 @@ The site serves as a professional identity hub for a developer/engineer.
 ## Domain Context
 - **Modules**:
   1. **Home**: High-impact introduction with interactive elements.
-  2. **Blog**: Technical articles and thoughts.
-  3. **Portfolio**: Visual showcase of projects with tech stack details.
-  4. **CV**: Structured resume (Online + Print-friendly).
+  2. **Garden** (Blog): Technical articles, thoughts, and knowledge base.
+  3. **Work** (Portfolio): Visual showcase of projects with tech stack details.
+  4. **About**: Professional identity, CV/Resume.
   5. **Snippets** (Planned): Reusable code blocks.
   6. **Uses** (Planned): Hardware/Software stack.
 
