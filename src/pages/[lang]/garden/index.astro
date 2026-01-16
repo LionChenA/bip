@@ -1,5 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
+import { GardenList } from '../../../components/garden/GardenList';
+import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'en' } }, { params: { lang: 'zh' } }];

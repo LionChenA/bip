@@ -1,7 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import { experimental_AstroContainer } from 'astro/container';
+import { GardenList } from '../../../components/garden/GardenList';
 import backlinks from '../../../data/backlinks.json';
+import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('garden');
