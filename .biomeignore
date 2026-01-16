@@ -1,0 +1,8 @@
+src/styles/global.css
+dist
+node_modules
+.astro
+.vercel
+public
+package-lock.json
+pnpm-lock.yaml
