@@ -10,7 +10,7 @@ type GardenType = 'evergreen' | 'literature' | 'article' | 'all';
 interface GardenItem {
   slug: string;
   title: string;
-  description: string;
+  description?: string; // Made optional to match Astro schema
   pubDate: string;
   type: string;
   lang: string;
