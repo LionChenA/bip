@@ -50,6 +50,12 @@ export function generateBacklinks() {
 
     meta[slug] = { title };
 
+    const excerpt = content
+      .replace(/^---[\s\S]+?---/, '')
+      .replace(/[#*`\[\]()]/g, '')
+      .trim()
+      .slice(0, 1024);
+
     gardenMeta.push({
       slug,
       title,
@@ -57,6 +63,7 @@ export function generateBacklinks() {
       type,
       description,
       lang,
+      excerpt,
     });
 
     if (!links[slug]) links[slug] = [];

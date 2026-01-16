@@ -1,17 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
-import { Timeline } from '../../../components/garden/Timeline'; // Optional: keep sidebar?
+import { SVGTimeline } from '../../../components/garden/SVGTimeline'; // Optional: keep sidebar?
 
 export async function getStaticPaths() {
   const posts = await getCollection('garden');
   return posts.map(post => {
-      // Assuming slug doesn't include lang prefix? 
-      // But collection entries usually don't have lang in slug unless folder structure.
-      // My schema has 'lang' field.
-      // I should map both 'en' and 'zh' paths?
-      // Or filter? 
-      // If I want /en/garden/slug, I need to match post.data.lang
       const lang = post.data.lang || 'en';
       return {
         params: { lang, slug: post.slug },
@@ -31,13 +25,14 @@ const timelineItems = allPosts
   .map(p => ({
     slug: p.slug,
     pubDate: p.data.pubDate,
-    title: p.data.title
+    title: p.data.title,
+    type: p.data.type
   }));
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description} lang={lang}>
   <div class="flex min-h-screen">
-    <Timeline items={timelineItems} activeSlug={post.slug} />
+    <SVGTimeline items={timelineItems} activeSlug={post.slug} client:load />
     
     <main className="flex-1 lg:ml-24 p-4 md:p-8 max-w-4xl mx-auto pt-20">
       <div className="mb-8">
