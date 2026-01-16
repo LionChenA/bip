@@ -5,7 +5,8 @@
     "pubDate": "2024-04-20",
     "type": "evergreen",
     "description": "This is a note that grows over time.",
-    "lang": "en"
+    "lang": "en",
+    "excerpt": "Evergreen Thinking\n\nThis is an evergreen note. It evolves.\nReferences Reading Notes/garden/reading-notes."
   },
   {
     "slug": "hello-garden",
@@ -13,7 +14,8 @@
     "pubDate": "2024-05-01",
     "type": "article",
     "description": "Welcome to my digital garden.",
-    "lang": "en"
+    "lang": "en",
+    "excerpt": "Hello World\n\nThis is an article in the digital garden.\nIt links to the Evergreen Note/garden/evergreen-note and Reading Notes/garden/reading-notes.\n\nAlso standard link: Reading Notes/garden/reading-notes."
   },
   {
     "slug": "reading-notes",
@@ -21,6 +23,7 @@
     "pubDate": "2024-04-15",
     "type": "literature",
     "description": "Notes on software design patterns.",
-    "lang": "en"
+    "lang": "en",
+    "excerpt": "Design Patterns\n\nNotes from books.\nThis relates to Evergreen Note/garden/evergreen-note."
   }
 ]

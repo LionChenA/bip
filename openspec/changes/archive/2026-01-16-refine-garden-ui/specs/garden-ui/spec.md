@@ -9,6 +9,10 @@ The Garden index page MUST feature a time-based navigation sidebar using a doubl
 - **And** the distance between markers MUST be proportional to content density ($k=0.4$ metaphor)
 - **And** labels MUST be implicit, appearing only on hover or via scroll-sync.
 
+## RENAMED Requirements
+- FROM: `### Requirement: Infinite Scroll & List Interaction`
+- TO: `### Requirement: Infinite Scroll & Reading Mode`
+
 ## MODIFIED Requirements
 ### Requirement: Infinite Scroll & Reading Mode
 The note list MUST support high-performance browsing and seamless transition into a Reading Mode island.
