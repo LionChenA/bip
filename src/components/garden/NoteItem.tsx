@@ -8,12 +8,12 @@ const PHYSICS = {
   stiffness: 200,
   damping: 25,
   mass: 1,
-};
+} as const;
 
 const UNIFIED_TRANSITION = {
   layout: PHYSICS,
   default: { duration: 0.3, ease: 'easeInOut' },
-};
+} as const;
 
 export interface NoteItemProps {
   slug: string;
