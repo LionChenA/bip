@@ -1,18 +1,5 @@
 import { defineCollection, z } from 'astro:content';
 
-const blog = defineCollection({
-  type: 'content',
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    pubDate: z.coerce.date(),
-    updatedDate: z.coerce.date().optional(),
-    heroImage: z.string().optional(),
-    tags: z.array(z.string()).default([]),
-    lang: z.enum(['en', 'zh']).default('en'),
-  }),
-});
-
 const garden = defineCollection({
   type: 'content',
   schema: z.object({
@@ -24,7 +11,7 @@ const garden = defineCollection({
     heroImage: z.string().optional(),
     tags: z.array(z.string()).default([]),
     lang: z.enum(['en', 'zh']).default('en'),
-    type: z.enum(['evergreen', 'literature', 'article']).default('article'),
+    type: z.enum(['evergreen', 'literature', 'article', 'note', 'thought', 'essay', 'snippet', 'Essay', 'Note', 'Snippet', 'Thought']).default('article'),
   }),
 });
 
@@ -43,4 +30,4 @@ const portfolio = defineCollection({
   }),
 });
 
-export const collections = { blog, portfolio, garden };
+export const collections = { portfolio, garden };
