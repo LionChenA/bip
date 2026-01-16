@@ -8,8 +8,7 @@
     "gen:garden": "tsx src/lib/backlinks.ts",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "biome check --write .",
-    "typecheck": "astro check"
+    "check": "biome check --write . && astro check"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",

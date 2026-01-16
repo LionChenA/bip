@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
+import { Mail } from 'lucide-react';
+import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 import { Badge } from '@/components/ui/badge';
 import { stack } from '@/data/stack';
 
@@ -137,9 +138,9 @@ function ContactSection() {
         Feel free to reach out for collaborations or just a chat.
       </p>
       <div className="flex gap-4 pt-2">
-        <SocialLink href="https://github.com" icon={Github} label="GitHub" />
-        <SocialLink href="https://twitter.com" icon={Twitter} label="Twitter" />
-        <SocialLink href="https://linkedin.com" icon={Linkedin} label="LinkedIn" />
+        <SocialLink href="https://github.com" icon={FaGithub} label="GitHub" />
+        <SocialLink href="https://twitter.com" icon={FaTwitter} label="Twitter" />
+        <SocialLink href="https://linkedin.com" icon={FaLinkedin} label="LinkedIn" />
         <SocialLink href="mailto:hello@example.com" icon={Mail} label="Email" />
       </div>
     </motion.section>
