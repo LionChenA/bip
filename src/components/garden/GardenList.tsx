@@ -17,16 +17,32 @@ interface GardenItem {
   tags?: string[];
 }
 
-export function GardenList({ lang = 'en' }: { lang?: string }) {
-  const [items, setItems] = useState<GardenItem[]>([]);
+export interface GardenListProps {
+  lang?: string;
+  initialPosts?: GardenItem[];
+  initialSlug?: string;
+  initialContent?: { content: string, backlinks?: any[] };
+}
+
+export function GardenList({ 
+  lang = 'en',
+  initialPosts = [],
+  initialSlug,
+  initialContent
+}: GardenListProps) {
+  const [items, setItems] = useState<GardenItem[]>(initialPosts);
   const [filteredItems, setFilteredItems] = useState<GardenItem[]>([]);
   const [filter, setFilter] = useState<GardenType>('all');
-  const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
-  const [contentCache, setContentCache] = useState<Record<string, { content: string, backlinks?: any[] }>>({});
-  const [loading, setLoading] = useState(true);
+  const [expandedSlug, setExpandedSlug] = useState<string | null>(initialSlug || null);
+  const [contentCache, setContentCache] = useState<Record<string, { content: string, backlinks?: any[] }>>(
+    initialSlug && initialContent ? { [initialSlug]: initialContent } : {}
+  );
+  const [loading, setLoading] = useState(initialPosts.length === 0);
 
-  // Load Metadata
+  // Load Metadata if not provided
   useEffect(() => {
+    if (initialPosts.length > 0) return;
+    
     fetch('/garden/meta.json')
       .then(res => res.json())
       .then((data: GardenItem[]) => {
@@ -37,7 +53,7 @@ export function GardenList({ lang = 'en' }: { lang?: string }) {
         console.error('Failed to load garden meta', err);
         setLoading(false);
       });
-  }, [lang]);
+  }, [lang, initialPosts]);
 
   // Filter Logic
   useEffect(() => {

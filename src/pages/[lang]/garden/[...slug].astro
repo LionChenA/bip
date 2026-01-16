@@ -1,7 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
+import { experimental_AstroContainer } from 'astro/container';
 import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
-import { SVGTimeline } from '../../../components/garden/SVGTimeline'; // Optional: keep sidebar?
+import { GardenList } from '../../../components/garden/GardenList';
+import backlinks from '../../../data/backlinks.json';
 
 export async function getStaticPaths() {
   const posts = await getCollection('garden');
@@ -18,40 +20,36 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 const { lang } = Astro.params;
 
-// Fetch all posts for Timeline (optional context)
+// Render Content for React hydration
+const container = await experimental_AstroContainer.create();
+const contentHtml = await container.renderToString(Content);
+
+// Prepare all posts for the list context
 const allPosts = await getCollection('garden');
-const timelineItems = allPosts
+const initialPosts = allPosts
   .filter(p => p.data.lang === lang)
   .map(p => ({
     slug: p.slug,
-    pubDate: p.data.pubDate,
     title: p.data.title,
-    type: p.data.type
+    description: p.data.description,
+    pubDate: p.data.pubDate.toISOString(),
+    type: p.data.type,
+    lang: p.data.lang,
+    tags: p.data.tags
   }));
+
+const initialContent = {
+  content: contentHtml,
+  backlinks: (backlinks as any)[post.slug] || []
+};
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description} lang={lang}>
-  <div class="flex min-h-screen">
-    <SVGTimeline items={timelineItems} activeSlug={post.slug} client:load />
-    
-    <main className="flex-1 lg:ml-24 p-4 md:p-8 max-w-4xl mx-auto pt-20">
-      <div className="mb-8">
-        <a href={`/${lang}/garden`} className="text-sm text-muted-foreground hover:text-primary mb-4 block">
-          ← Back to Garden
-        </a>
-        <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-mono text-muted-foreground uppercase">{post.data.type}</span>
-            <span className="text-xs text-muted-foreground">{post.data.pubDate.toLocaleDateString()}</span>
-        </div>
-        <h1 className="text-4xl font-bold mb-4">{post.data.title}</h1>
-        {post.data.description && (
-          <p className="text-xl text-muted-foreground">{post.data.description}</p>
-        )}
-      </div>
-
-      <div className="prose dark:prose-invert max-w-none">
-        <Content />
-      </div>
-    </main>
-  </div>
+  <GardenList 
+    client:load 
+    lang={lang}
+    initialPosts={initialPosts}
+    initialSlug={post.slug}
+    initialContent={initialContent}
+  />
 </BaseLayout>

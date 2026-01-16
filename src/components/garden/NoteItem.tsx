@@ -1,6 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+
+// UNIFIED PHYSICS CONSTANT
+const PHYSICS = {
+  type: "spring",
+  stiffness: 200,   
+  damping: 25,      
+  mass: 1           
+};
+
+const UNIFIED_TRANSITION = {
+  layout: PHYSICS,
+  default: { duration: 0.3, ease: "easeInOut" }
+};
 
 export interface NoteItemProps {
   slug: string;
@@ -35,16 +48,6 @@ export function NoteItem({
   const hoverTimer = useRef<NodeJS.Timeout | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (isExpanded && cardRef.current) {
-      cardRef.current.focus();
-      
-      setTimeout(() => {
-        cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
-      }, 100);
-    }
-  }, [isExpanded]);
-
   const handleMouseEnter = () => {
     if (isExpanded) return;
     setIsHovered(true);
@@ -66,10 +69,19 @@ export function NoteItem({
       tabIndex={isExpanded ? 0 : -1}
       layout
       layoutId={`card-${slug}`}
+      transition={UNIFIED_TRANSITION}
+      onLayoutAnimationComplete={() => {
+        if (isExpanded && cardRef.current) {
+            const rect = cardRef.current.getBoundingClientRect();
+            if (rect.top < -20) { 
+                cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+            }
+        }
+      }}
       className={cn(
         "group rounded-xl border bg-card text-card-foreground transition-colors duration-300 relative outline-none",
         isExpanded 
-          ? "border-primary/20 shadow-2xl ring-1 ring-primary/5 z-20 my-8 overflow-visible" 
+          ? "border-primary/20 shadow-2xl ring-1 ring-primary/5 z-20 my-6 overflow-visible" 
           : "cursor-pointer hover:border-primary/50 hover:shadow-lg active:scale-[0.99] z-0 overflow-hidden"
       )}
       onMouseEnter={handleMouseEnter}
@@ -78,22 +90,24 @@ export function NoteItem({
     >
       <div className={cn(
         "ease-in-out",
-        isExpanded ? "py-0 px-6" : "py-6 px-6"
+        isExpanded ? "py-0 px-5" : "py-4 px-5"
       )}>
         <motion.div 
             layout
+            transition={UNIFIED_TRANSITION}
             className={cn(
-                "flex justify-between items-start gap-4 z-30",
+                "flex justify-between items-start gap-3 z-30", 
                 isExpanded 
-                    ? "sticky top-0 bg-card/95 backdrop-blur-md -mx-6 px-6 py-6 border-b border-border/10" 
-                    : "mb-2"
+                    ? "sticky top-0 bg-card/95 backdrop-blur-md -mx-5 px-5 py-4 border-b border-border/10 rounded-t-xl" 
+                    : "mb-1"
             )}
         >
             <motion.h3 
-                layout="position"
+                layout
+                transition={UNIFIED_TRANSITION}
                 className={cn(
-                    "font-bold leading-tight origin-left",
-                    isExpanded ? "text-3xl" : "text-xl group-hover:text-primary"
+                    "font-bold leading-tight origin-left", 
+                    isExpanded ? "text-3xl" : "text-lg group-hover:text-primary"
                 )}
             >
                 {title}
@@ -120,7 +134,7 @@ export function NoteItem({
                              onCollapse();
                         }
                     }}
-                    className="shrink-0 p-2 rounded-full hover:bg-muted/50 transition-colors -mt-2 -mr-2"
+                    className="shrink-0 p-2 rounded-full hover:bg-muted/50 transition-colors -mt-1 -mr-2"
                 >
                     <span className="text-xs font-mono mr-2 opacity-50 hidden sm:inline">ESC</span>
                     ✕
@@ -130,8 +144,9 @@ export function NoteItem({
 
         <motion.div 
             layout 
+            transition={UNIFIED_TRANSITION}
             className={cn(
-                "flex items-center gap-2 flex-wrap text-[10px] sm:text-xs font-mono text-muted-foreground mb-4"
+                "flex items-center gap-2 flex-wrap text-[10px] sm:text-xs font-mono text-muted-foreground mb-2" 
             )}
         >
             <span className="uppercase tracking-widest text-primary/70">{type}</span>
@@ -159,10 +174,11 @@ export function NoteItem({
         {isExpanded && (
            <motion.div
              layout
-             initial={{ scaleX: 0, opacity: 0 }}
-             animate={{ scaleX: 1, opacity: 1 }}
-             transition={{ delay: 0.1, duration: 0.3 }}
-             className="h-px w-full bg-border my-6 origin-left"
+             transition={UNIFIED_TRANSITION}
+             initial={{ scaleX: 0, opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
+             animate={{ scaleX: 1, opacity: 1, height: "1px", marginTop: "16px", marginBottom: "16px" }}
+             exit={{ scaleX: 0, opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
+             className="w-full bg-border origin-left"
            />
         )}
 
@@ -175,7 +191,7 @@ export function NoteItem({
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <p className="text-sm text-muted-foreground line-clamp-2 pb-2 pt-2">
+              <p className="text-sm text-muted-foreground line-clamp-2 pb-1 pt-1"> 
                 {description}
               </p>
             </motion.div>
@@ -187,13 +203,22 @@ export function NoteItem({
             <motion.div
               key="content-body"
               layout
+              transition={UNIFIED_TRANSITION}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10, transition: { duration: 0.2 } }}
-              transition={{ delay: 0.15, duration: 0.4, ease: "easeOut" }}
-              className="prose prose-lg dark:prose-invert max-w-none pb-20"
+              // EXIT ANIMATION FIX:
+              // Animate height to 0 to allow the parent container to shrink smoothly.
+              // Also animate padding/margin if they were part of the spacing.
+              exit={{ 
+                opacity: 0, 
+                y: 10, 
+                height: 0, 
+                marginTop: 0,
+                transition: { duration: 0.3, ease: "easeInOut" } // Match the general speed
+              }}
+              className="prose prose-lg dark:prose-invert max-w-none pb-12 overflow-hidden" // overflow-hidden is crucial for height anim
             >
-              <div className="text-xl leading-relaxed mb-10 text-muted-foreground italic font-serif border-l-4 border-primary/20 pl-6">
+              <div className="text-xl leading-relaxed mb-8 text-muted-foreground italic font-serif border-l-4 border-primary/20 pl-5">
                 {description}
               </div>
 
@@ -201,9 +226,9 @@ export function NoteItem({
                 <>
                   <div dangerouslySetInnerHTML={{ __html: content }} />
                   {backlinks && backlinks.length > 0 && (
-                    <div className="mt-20 pt-8 border-t border-border/40">
-                      <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6">Backlinks & References</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="mt-12 pt-6 border-t border-border/40">
+                      <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4">Backlinks & References</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {backlinks.map(link => (
                           <button
                             key={link.slug}
@@ -212,7 +237,7 @@ export function NoteItem({
                                 e.stopPropagation();
                                 onExpand(link.slug);
                             }}
-                            className="text-left p-4 rounded-xl border bg-card/50 hover:bg-card hover:border-primary transition-all group/link"
+                            className="text-left p-3 rounded-xl border bg-card/50 hover:bg-card hover:border-primary transition-all group/link"
                           >
                             <span className="text-[10px] font-mono text-muted-foreground block mb-1 uppercase tracking-tight">Referenced In</span>
                             <span className="font-bold text-sm group-hover/link:text-primary transition-colors">{link.title}</span>
@@ -223,7 +248,7 @@ export function NoteItem({
                   )}
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center p-20 space-y-4">
+                <div className="flex flex-col items-center justify-center p-12 space-y-4">
                   <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                   <p className="text-sm text-muted-foreground animate-pulse">Loading garden note...</p>
                 </div>

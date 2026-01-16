@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
 import { GardenList } from '../../../components/garden/GardenList';
 
@@ -10,8 +11,22 @@ export function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
+
+// Pre-fetch data for SSG
+const allPosts = await getCollection('garden');
+const initialPosts = allPosts
+  .filter(p => p.data.lang === lang)
+  .map(p => ({
+    slug: p.slug,
+    title: p.data.title,
+    description: p.data.description,
+    pubDate: p.data.pubDate.toISOString(),
+    type: p.data.type,
+    lang: p.data.lang,
+    tags: p.data.tags
+  }));
 ---
 
 <BaseLayout title="Garden" lang={lang}>
-  <GardenList client:load lang={lang} />
+  <GardenList client:load lang={lang} initialPosts={initialPosts} />
 </BaseLayout>
