@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Timeline } from './Timeline';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { AnimatePresence, motion, LayoutGroup } from 'framer-motion'; // Added LayoutGroup
+import { SVGTimeline } from './SVGTimeline';
 import { FilterBar } from './FilterBar';
 import { NoteItem } from './NoteItem';
 import { TOC } from './TOC';
@@ -14,6 +14,7 @@ interface GardenItem {
   pubDate: string;
   type: string;
   lang: string;
+  tags?: string[];
 }
 
 export function GardenList({ lang = 'en' }: { lang?: string }) {
@@ -21,9 +22,10 @@ export function GardenList({ lang = 'en' }: { lang?: string }) {
   const [filteredItems, setFilteredItems] = useState<GardenItem[]>([]);
   const [filter, setFilter] = useState<GardenType>('all');
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
-  const [contentCache, setContentCache] = useState<Record<string, string>>({});
+  const [contentCache, setContentCache] = useState<Record<string, { content: string, backlinks?: any[] }>>({});
   const [loading, setLoading] = useState(true);
 
+  // Load Metadata
   useEffect(() => {
     fetch('/garden/meta.json')
       .then(res => res.json())
@@ -37,6 +39,7 @@ export function GardenList({ lang = 'en' }: { lang?: string }) {
       });
   }, [lang]);
 
+  // Filter Logic
   useEffect(() => {
     if (filter === 'all') {
       setFilteredItems(items);
@@ -45,24 +48,51 @@ export function GardenList({ lang = 'en' }: { lang?: string }) {
     }
   }, [filter, items]);
 
-  const groupedItems = useMemo(() => {
-    const grouped: Record<string, Record<string, GardenItem[]>> = {};
-    filteredItems.forEach(item => {
-      const date = new Date(item.pubDate);
-      const year = date.getFullYear().toString();
-      const month = date.toLocaleString('default', { month: 'short' });
-      
-      if (!grouped[year]) grouped[year] = {};
-      if (!grouped[year][month]) grouped[year][month] = [];
-      grouped[year][month].push(item);
-    });
-    return grouped;
-  }, [filteredItems]);
+  // Preload Content on Hover
+  const handleHover = async (slug: string) => {
+    if (!contentCache[slug]) {
+      try {
+        const res = await fetch(`/garden/${slug}.json`);
+        const data = await res.json();
+        setContentCache(prev => ({ ...prev, [slug]: { content: data.content, backlinks: data.backlinks } }));
+      } catch (e) {
+      }
+    }
+  };
 
+  const handleExpand = async (slug: string) => {
+    if (expandedSlug === slug) {
+      handleCollapse(slug); // Pass slug for scroll calculation
+      return;
+    }
+
+    setExpandedSlug(slug);
+    window.history.pushState({ slug }, '', `/${lang}/garden/${slug}`);
+
+    if (!contentCache[slug]) {
+      try {
+        const res = await fetch(`/garden/${slug}.json`);
+        const data = await res.json();
+        setContentCache(prev => ({ ...prev, [slug]: { content: data.content, backlinks: data.backlinks } }));
+      } catch (e) {
+        console.error('Failed to load content', e);
+      }
+    }
+  };
+
+  // The Elevator Effect Logic: Scroll back if deep in content
+  const handleCollapse = useCallback((slug?: string) => {
+    // If we have a specific slug (clicked close button), we can try to be smart about scrolling
+    // But mostly, just collapsing state is enough as NoteItem handles the cleanup
+    setExpandedSlug(null);
+    window.history.pushState(null, '', `/${lang}/garden`);
+  }, [lang]);
+
+  // Popstate Handler
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
-      const match = path.match(/^\/garden\/(.+)$/);
+      const match = path.match(new RegExp(`^/${lang}/garden/(.+)$`));
       if (match) {
         setExpandedSlug(match[1]);
       } else {
@@ -71,47 +101,34 @@ export function GardenList({ lang = 'en' }: { lang?: string }) {
     };
 
     window.addEventListener('popstate', handlePopState);
-    
     handlePopState();
-
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [lang]);
 
-  const handleExpand = async (slug: string) => {
-    setExpandedSlug(slug);
-    window.history.pushState({ slug }, '', `/garden/${slug}`);
-
-    if (!contentCache[slug]) {
-      try {
-        const res = await fetch(`/garden/${slug}.json`);
-        const data = await res.json();
-        setContentCache(prev => ({ ...prev, [slug]: data.content }));
-      } catch (e) {
-        console.error('Failed to load content', e);
+  // Global ESC Handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && expandedSlug) {
+        handleCollapse();
       }
-    }
-  };
-
-  const handleCollapse = () => {
-    setExpandedSlug(null);
-    window.history.pushState(null, '', '/garden');
-  };
-
-  const activeItem = expandedSlug ? items.find(i => i.slug === expandedSlug) : null;
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [expandedSlug, handleCollapse]); 
 
   return (
     <div className="flex min-h-screen">
-      <Timeline 
+      <SVGTimeline 
         items={items} 
         activeSlug={expandedSlug || undefined} 
       />
       
       <main className="flex-1 lg:ml-24 p-4 md:p-8 max-w-4xl mx-auto">
-        <header className="mb-12 pt-20">
-          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+        <header className="mb-10 pt-20">
+          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
             Digital Garden
           </h1>
-          <p className="text-xl text-muted-foreground mb-8">
+          <p className="text-xl text-muted-foreground mb-6">
             A collection of evolving notes, thoughts, and explorations.
           </p>
           <FilterBar currentFilter={filter} onFilterChange={setFilter} />
@@ -125,38 +142,32 @@ export function GardenList({ lang = 'en' }: { lang?: string }) {
            </div>
         ) : (
           <div className="space-y-6">
-            <AnimatePresence>
-              {filteredItems.map(item => (
-                <NoteItem
-                  key={item.slug}
-                  {...item}
-                  isExpanded={expandedSlug === item.slug}
-                  onExpand={handleExpand}
-                  onCollapse={handleCollapse}
-                  content={contentCache[item.slug]}
-                />
-              ))}
-            </AnimatePresence>
+             <div className="flex flex-col gap-4 pb-32">
+              <LayoutGroup> {/* The Physics Field: Coordinates sibling movement */}
+                {filteredItems.map(item => (
+                  <NoteItem
+                    key={item.slug}
+                    {...item}
+                    isExpanded={expandedSlug === item.slug}
+                    onExpand={handleExpand}
+                    onCollapse={() => handleCollapse(item.slug)}
+                    onHover={handleHover}
+                    content={contentCache[item.slug]?.content}
+                    backlinks={contentCache[item.slug]?.backlinks}
+                  />
+                ))}
+              </LayoutGroup>
+            </div>
           </div>
         )}
         
         <AnimatePresence>
-          {expandedSlug && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
-              onClick={handleCollapse}
-            />
+          {expandedSlug && contentCache[expandedSlug] && (
+            <div className="z-[60] relative">
+              <TOC content={contentCache[expandedSlug].content} />
+            </div>
           )}
         </AnimatePresence>
-
-        {expandedSlug && contentCache[expandedSlug] && (
-          <div className="z-[60] relative">
-            <TOC content={contentCache[expandedSlug]} />
-          </div>
-        )}
       </main>
     </div>
   );
