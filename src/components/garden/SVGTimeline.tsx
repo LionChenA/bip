@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 interface SVGTimelineProps {
   items: { pubDate: string | Date; slug: string; title?: string }[];

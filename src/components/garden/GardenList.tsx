@@ -1,5 +1,5 @@
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'; // Added LayoutGroup
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, LayoutGroup } from 'framer-motion'; // Added LayoutGroup
+import { useCallback, useEffect, useState } from 'react';
 import { FilterBar } from './FilterBar';
 import { NoteItem } from './NoteItem';
 import { SVGTimeline } from './SVGTimeline';
@@ -74,7 +74,7 @@ export function GardenList({
           ...prev,
           [slug]: { content: data.content, backlinks: data.backlinks },
         }));
-      } catch (e) {}
+      } catch (_e) {}
     }
   };
 
@@ -103,7 +103,7 @@ export function GardenList({
 
   // The Elevator Effect Logic: Scroll back if deep in content
   const handleCollapse = useCallback(
-    (slug?: string) => {
+    (_slug?: string) => {
       // If we have a specific slug (clicked close button), we can try to be smart about scrolling
       // But mostly, just collapsing state is enough as NoteItem handles the cleanup
       setExpandedSlug(null);

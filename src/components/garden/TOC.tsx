@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface TOCProps {
   content: string;
@@ -23,7 +23,7 @@ export function TOC({ content }: TOCProps) {
       return {
         id,
         text: el.textContent || '',
-        level: parseInt(el.tagName.substring(1)),
+        level: parseInt(el.tagName.substring(1), 10),
       };
     });
 

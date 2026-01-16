@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 // UNIFIED PHYSICS CONSTANT
@@ -230,6 +230,7 @@ export function NoteItem({
 
               {content ? (
                 <>
+                  {/* biome-ignore lint/security/noDangerouslySetInnerHtml: MDX content is sanitized at build time */}
                   <div dangerouslySetInnerHTML={{ __html: content }} />
                   {backlinks && backlinks.length > 0 && (
                     <div className="mt-12 pt-6 border-t border-border/40">

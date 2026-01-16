@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
-import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { stack } from '@/data/stack';
 

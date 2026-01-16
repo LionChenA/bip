@@ -1,15 +1,7 @@
 import type { CollectionEntry } from 'astro:content';
-import { ExternalLink, Github } from 'lucide-react';
-import React from 'react';
+import { ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ProjectCardProps {
   project: CollectionEntry<'portfolio'>;

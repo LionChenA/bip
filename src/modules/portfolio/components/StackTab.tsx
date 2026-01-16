@@ -1,6 +1,6 @@
 import type { CollectionEntry } from 'astro:content';
 import { AnimatePresence, motion } from 'framer-motion';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { stack, type TechItem } from '@/data/stack';

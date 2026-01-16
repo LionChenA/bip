@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FiMonitor, FiMoon, FiSun } from 'react-icons/fi';
 
 type Theme = 'light' | 'dark' | 'system';

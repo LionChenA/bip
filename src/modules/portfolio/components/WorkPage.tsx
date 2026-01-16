@@ -1,5 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PortfolioTab } from './PortfolioTab';
 import { StackTab } from './StackTab';

@@ -1,5 +1,4 @@
 import type { CollectionEntry } from 'astro:content';
-import React from 'react';
 import { ProjectCard } from './ProjectCard';
 
 interface PortfolioTabProps {

@@ -1,7 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
-import { WorkPage } from '../../../modules/portfolio/components/WorkPage';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'en' } }, { params: { lang: 'zh' } }];

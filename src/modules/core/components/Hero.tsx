@@ -11,7 +11,7 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({
   title = "HELLO, I'M SISYPHUS",
   subtitle = 'Engineer. Builder. Minimalist.',
-  lang = 'en',
+  lang: _lang = 'en',
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
 
