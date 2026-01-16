@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FiSun, FiMoon, FiMonitor } from 'react-icons/fi';
+import { FiMonitor, FiMoon, FiSun } from 'react-icons/fi';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -17,13 +17,13 @@ export const ThemeToggle = () => {
     const observer = new MutationObserver(() => {
       const current = document.documentElement.getAttribute('data-theme') as Theme;
       if (current) {
-        setTheme(prev => (prev !== current ? current : prev));
+        setTheme((prev) => (prev !== current ? current : prev));
       }
     });
 
-    observer.observe(document.documentElement, { 
-      attributes: true, 
-      attributeFilter: ['data-theme'] 
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
     });
 
     return () => observer.disconnect();
@@ -33,24 +33,27 @@ export const ThemeToggle = () => {
     const sequence: Theme[] = ['system', 'light', 'dark'];
     const nextIndex = (sequence.indexOf(theme) + 1) % sequence.length;
     const newTheme = sequence[nextIndex];
-    
+
     setTheme(newTheme);
-    
+
     // Dispatch custom logic implemented in ThemeProvider.astro
     // We update localStorage and DOM classes via the inline script logic
     // But since that script is not a React component, we need to replicate its logic or trigger it
     // The safest way is to manually replicate the applyTheme logic here for immediate feedback
-    
-    const effectiveTheme = newTheme === 'system' 
-      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-      : newTheme;
+
+    const effectiveTheme =
+      newTheme === 'system'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+        : newTheme;
 
     if (effectiveTheme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-    
+
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme-preference', newTheme);
   };

@@ -1,9 +1,9 @@
-import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
+import rss from '@astrojs/rss';
 
 export async function GET(context: any) {
   const posts = await getCollection('garden', ({ data }) => {
-      return data.type === 'article';
+    return data.type === 'article';
   });
   return rss({
     title: 'Sisyphus Articles',

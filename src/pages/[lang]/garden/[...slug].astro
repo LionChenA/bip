@@ -1,18 +1,18 @@
 ---
 import { getCollection } from 'astro:content';
 import { experimental_AstroContainer } from 'astro/container';
-import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
 import { GardenList } from '../../../components/garden/GardenList';
 import backlinks from '../../../data/backlinks.json';
+import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('garden');
-  return posts.map(post => {
-      const lang = post.data.lang || 'en';
-      return {
-        params: { lang, slug: post.slug },
-        props: { post },
-      };
+  return posts.map((post) => {
+    const lang = post.data.lang || 'en';
+    return {
+      params: { lang, slug: post.slug },
+      props: { post },
+    };
   });
 }
 
@@ -27,20 +27,20 @@ const contentHtml = await container.renderToString(Content);
 // Prepare all posts for the list context
 const allPosts = await getCollection('garden');
 const initialPosts = allPosts
-  .filter(p => p.data.lang === lang)
-  .map(p => ({
+  .filter((p) => p.data.lang === lang)
+  .map((p) => ({
     slug: p.slug,
     title: p.data.title,
     description: p.data.description,
     pubDate: p.data.pubDate.toISOString(),
     type: p.data.type,
     lang: p.data.lang,
-    tags: p.data.tags
+    tags: p.data.tags,
   }));
 
 const initialContent = {
   content: contentHtml,
-  backlinks: (backlinks as any)[post.slug] || []
+  backlinks: (backlinks as any)[post.slug] || [],
 };
 ---
 

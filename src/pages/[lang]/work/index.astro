@@ -4,10 +4,7 @@ import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
 import { WorkPage } from '../../../modules/portfolio/components/WorkPage';
 
 export function getStaticPaths() {
-  return [
-    { params: { lang: 'en' } },
-    { params: { lang: 'zh' } },
-  ];
+  return [{ params: { lang: 'en' } }, { params: { lang: 'zh' } }];
 }
 
 const { lang } = Astro.params;

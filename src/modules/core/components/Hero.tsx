@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
 import { animate, stagger } from 'animejs';
+import type React from 'react';
+import { useEffect, useRef } from 'react';
 
 interface HeroProps {
   title?: string;
@@ -7,10 +8,10 @@ interface HeroProps {
   lang?: string;
 }
 
-export const Hero: React.FC<HeroProps> = ({ 
-  title = "HELLO, I'M SISYPHUS", 
-  subtitle = "Engineer. Builder. Minimalist.",
-  lang = "en" 
+export const Hero: React.FC<HeroProps> = ({
+  title = "HELLO, I'M SISYPHUS",
+  subtitle = 'Engineer. Builder. Minimalist.',
+  lang = 'en',
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +26,7 @@ export const Hero: React.FC<HeroProps> = ({
 
     // Clear existing grid
     gridEl.innerHTML = '';
-    
+
     // Create grid items
     for (let i = 0; i < total; i++) {
       const item = document.createElement('div');
@@ -49,56 +50,56 @@ export const Hero: React.FC<HeroProps> = ({
     animate('.grid-item', {
       scale: [
         { to: 0.1, ease: 'outSine', duration: 500 },
-        { to: 1, ease: 'inOutQuad', duration: 1200 }
+        { to: 1, ease: 'inOutQuad', duration: 1200 },
       ],
       delay: stagger(20, { grid: [columns, rows], from: 'center' }),
-      loop: false
+      loop: false,
     });
 
     // Interaction handler
     const handleMouseMove = (e: MouseEvent) => {
-        // Calculate relative position
-        const rect = gridEl.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        // Find index approximately (simplified for performance)
-        const col = Math.floor(x / 50);
-        const row = Math.floor(y / 50);
-        const index = row * columns + col;
-        
-        if (index >= 0 && index < total) {
-             animate(gridEl.children[index], {
-                scale: [
-                    { to: 1.5, duration: 100, ease: 'outQuad' },
-                    { to: 1, duration: 900, ease: 'outElastic(1, .5)' }
-                ],
-                backgroundColor: [
-                    { to: 'var(--primary)', duration: 100 },
-                    { to: 'transparent', duration: 800 }
-                ]
-            });
-            
-            animate('.grid-item', {
-                scale: 1,
-                delay: stagger(50, {grid: [columns, rows], from: index}),
-                duration: 400,
-                ease: 'outSine'
-            });
-        }
+      // Calculate relative position
+      const rect = gridEl.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Find index approximately (simplified for performance)
+      const col = Math.floor(x / 50);
+      const row = Math.floor(y / 50);
+      const index = row * columns + col;
+
+      if (index >= 0 && index < total) {
+        animate(gridEl.children[index], {
+          scale: [
+            { to: 1.5, duration: 100, ease: 'outQuad' },
+            { to: 1, duration: 900, ease: 'outElastic(1, .5)' },
+          ],
+          backgroundColor: [
+            { to: 'var(--primary)', duration: 100 },
+            { to: 'transparent', duration: 800 },
+          ],
+        });
+
+        animate('.grid-item', {
+          scale: 1,
+          delay: stagger(50, { grid: [columns, rows], from: index }),
+          duration: 400,
+          ease: 'outSine',
+        });
+      }
     };
-    
+
     // Throttled mouse move for performance
     let ticking = false;
     const onMove = (e: MouseEvent) => {
-        if(!ticking) {
-            window.requestAnimationFrame(() => {
-                handleMouseMove(e);
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleMouseMove(e);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
 
     window.addEventListener('mousemove', onMove);
 
@@ -110,15 +111,14 @@ export const Hero: React.FC<HeroProps> = ({
   return (
     <div className="relative w-full h-[80vh] overflow-hidden flex items-center justify-center">
       {/* Background Grid */}
-      <div 
-        ref={gridRef} 
+      <div
+        ref={gridRef}
         className="absolute inset-0 grid gap-1 pointer-events-none z-0"
         style={{
-            gridTemplateColumns: 'repeat(var(--columns), 1fr)',
-            gridTemplateRows: 'repeat(var(--rows), 1fr)'
+          gridTemplateColumns: 'repeat(var(--columns), 1fr)',
+          gridTemplateRows: 'repeat(var(--rows), 1fr)',
         }}
-      >
-      </div>
+      ></div>
 
       {/* Foreground Content */}
       <div className="relative z-10 text-center pointer-events-none select-none mix-blend-difference text-primary-foreground">

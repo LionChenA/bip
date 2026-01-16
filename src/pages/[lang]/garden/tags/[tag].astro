@@ -5,22 +5,24 @@ import BaseLayout from '../../../../modules/core/layouts/BaseLayout.astro';
 export async function getStaticPaths() {
   const allPosts = await getCollection('garden');
   const uniqueTags = new Set<string>();
-  
-  allPosts.forEach(post => {
-      post.data.tags.forEach(tag => { uniqueTags.add(tag); });
+
+  allPosts.forEach((post) => {
+    post.data.tags.forEach((tag) => {
+      uniqueTags.add(tag);
+    });
   });
 
   const paths = [];
   for (const tag of uniqueTags) {
-      paths.push({ params: { lang: 'en', tag }, props: { tag } });
-      paths.push({ params: { lang: 'zh', tag }, props: { tag } });
+    paths.push({ params: { lang: 'en', tag }, props: { tag } });
+    paths.push({ params: { lang: 'zh', tag }, props: { tag } });
   }
   return paths;
 }
 
 const { lang, tag } = Astro.params;
 const posts = await getCollection('garden', ({ data }) => {
-    return data.lang === lang && data.tags.includes(tag);
+  return data.lang === lang && data.tags.includes(tag);
 });
 
 // Sort by date

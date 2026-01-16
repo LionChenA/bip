@@ -11,7 +11,21 @@ const garden = defineCollection({
     heroImage: z.string().optional(),
     tags: z.array(z.string()).default([]),
     lang: z.enum(['en', 'zh']).default('en'),
-    type: z.enum(['evergreen', 'literature', 'article', 'note', 'thought', 'essay', 'snippet', 'Essay', 'Note', 'Snippet', 'Thought']).default('article'),
+    type: z
+      .enum([
+        'evergreen',
+        'literature',
+        'article',
+        'note',
+        'thought',
+        'essay',
+        'snippet',
+        'Essay',
+        'Note',
+        'Snippet',
+        'Thought',
+      ])
+      .default('article'),
   }),
 });
 

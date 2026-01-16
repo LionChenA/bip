@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { IoLanguage } from 'react-icons/io5';
 
 interface LanguageSwitcherProps {

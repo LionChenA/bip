@@ -1,19 +1,19 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import ThemeProvider from '../components/ThemeProvider.astro';
 import SEO from '../../../components/SEO.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import ThemeProvider from '../components/ThemeProvider.astro';
 import '../../../styles/global.css';
 
 interface Props {
-	title?: string;
-    description?: string;
-    image?: string;
-    lang?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  lang?: string;
 }
 
-const { title, description, image, lang = "en" } = Astro.props;
+const { title, description, image, lang = 'en' } = Astro.props;
 ---
 
 <html lang={lang}>

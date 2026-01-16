@@ -3,19 +3,11 @@
   "mcp": {
     "shadcn": {
       "type": "local",
-      "command": [
-        "npx",
-        "shadcn@latest",
-        "mcp"
-      ]
+      "command": ["npx", "shadcn@latest", "mcp"]
     },
     "context7": {
       "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@upstash/context7-mcp"
-      ],
+      "command": ["npx", "-y", "@upstash/context7-mcp"],
       "environment": {
         "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
       }

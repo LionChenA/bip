@@ -5,13 +5,13 @@ interface Props {
   image?: string;
 }
 
-const { 
-  title, 
-  description = "A minimalist digital garden and portfolio exploring software engineering, design, and philosophy.", 
-  image = "/og-default.png" 
+const {
+  title,
+  description = 'A minimalist digital garden and portfolio exploring software engineering, design, and philosophy.',
+  image = '/og-default.png',
 } = Astro.props;
 
-const siteTitle = "Sisyphus";
+const siteTitle = 'Sisyphus';
 const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---

@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -13,7 +12,7 @@ if (!fs.existsSync(targetDir)) {
 }
 
 const files = fs.readdirSync(targetDir);
-files.filter(f => f.startsWith('mock-')).forEach(f => fs.unlinkSync(path.join(targetDir, f)));
+files.filter((f) => f.startsWith('mock-')).forEach((f) => fs.unlinkSync(path.join(targetDir, f)));
 
 const types = ['evergreen', 'literature', 'article', 'seed'];
 const tags = ['design', 'ai', 'react', 'astro', 'philosophy', 'system-design', 'testing', 'css'];
@@ -27,19 +26,19 @@ function generateMock(index) {
   const type = types[Math.floor(Math.random() * types.length)];
   const numTags = Math.floor(Math.random() * 3) + 1;
   const selectedTags = [];
-  for(let i=0; i<numTags; i++) {
+  for (let i = 0; i < numTags; i++) {
     selectedTags.push(tags[Math.floor(Math.random() * tags.length)]);
   }
-  
+
   const id = `mock-${index.toString().padStart(3, '0')}`;
   const title = `Mock Note ${index}: ${type.charAt(0).toUpperCase() + type.slice(1)} Concept`;
-  
+
   const content = `---
 title: "${title}"
 description: "This is a generated mock note to test the garden layout and timeline visualization."
 pubDate: "${date.toISOString().split('T')[0]}"
 type: "${type}"
-tags: [${selectedTags.map(t => `"${t}"`).join(', ')}]
+tags: [${selectedTags.map((t) => `"${t}"`).join(', ')}]
 lang: "en"
 ---
 

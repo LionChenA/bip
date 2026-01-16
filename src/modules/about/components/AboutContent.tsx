@@ -1,27 +1,27 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { stack } from '@/data/stack';
+import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
+import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Mail, Github, Twitter, Linkedin } from 'lucide-react';
+import { stack } from '@/data/stack';
 
 const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 }
+  show: { opacity: 1, y: 0 },
 };
 
 export function AboutContent() {
   return (
-    <motion.div 
+    <motion.div
       variants={container}
       initial="hidden"
       animate="show"
@@ -42,11 +42,13 @@ function BioSection() {
       <h2 className="text-2xl font-bold tracking-tight">Who Am I</h2>
       <div className="prose dark:prose-invert text-muted-foreground text-lg leading-relaxed">
         <p>
-          I am a dedicated software engineer with a passion for building beautiful, functional, and scalable web applications. 
-          With a strong foundation in modern web technologies, I bridge the gap between design and engineering.
+          I am a dedicated software engineer with a passion for building beautiful, functional, and
+          scalable web applications. With a strong foundation in modern web technologies, I bridge
+          the gap between design and engineering.
         </p>
         <p>
-          My approach is rooted in simplicity and performance. I believe that the best user experiences are those that feel natural and intuitive.
+          My approach is rooted in simplicity and performance. I believe that the best user
+          experiences are those that feel natural and intuitive.
         </p>
       </div>
     </motion.section>
@@ -54,13 +56,24 @@ function BioSection() {
 }
 
 function InterestsSection() {
-  const interests = ["Open Source", "UI/UX Design", "AI Agents", "System Architecture", "Photography", "Generative Art"];
+  const interests = [
+    'Open Source',
+    'UI/UX Design',
+    'AI Agents',
+    'System Architecture',
+    'Photography',
+    'Generative Art',
+  ];
   return (
     <motion.section variants={item} className="space-y-4">
       <h2 className="text-2xl font-bold tracking-tight">Interests</h2>
       <div className="flex flex-wrap gap-2">
-        {interests.map(interest => (
-          <Badge key={interest} variant="secondary" className="px-3 py-1 text-sm bg-muted/50 hover:bg-muted transition-colors">
+        {interests.map((interest) => (
+          <Badge
+            key={interest}
+            variant="secondary"
+            className="px-3 py-1 text-sm bg-muted/50 hover:bg-muted transition-colors"
+          >
             {interest}
           </Badge>
         ))}
@@ -74,19 +87,19 @@ function TechStackSection() {
     <motion.section variants={item} className="space-y-6">
       <h2 className="text-2xl font-bold tracking-tight">Tech Stack</h2>
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
-        {Object.values(stack).map(tech => {
-           const Icon = tech.icon;
-           return (
-             <div 
-               key={tech.id} 
-               className="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors group"
-               title={tech.label}
-             >
-               <div className="text-2xl text-muted-foreground group-hover:text-foreground transition-colors">
-                 <Icon />
-               </div>
-             </div>
-           );
+        {Object.values(stack).map((tech) => {
+          const Icon = tech.icon;
+          return (
+            <div
+              key={tech.id}
+              className="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors group"
+              title={tech.label}
+            >
+              <div className="text-2xl text-muted-foreground group-hover:text-foreground transition-colors">
+                <Icon />
+              </div>
+            </div>
+          );
         })}
       </div>
     </motion.section>
@@ -94,49 +107,51 @@ function TechStackSection() {
 }
 
 function AchievementsSection() {
-    const achievements = [
-        { year: '2025', title: 'Launched Garden Core v1.0' },
-        { year: '2024', title: 'Contributed to Astro Ecosystem' },
-        { year: '2023', title: 'Senior Frontend Engineer Promotion' },
-    ];
-    return (
-        <motion.section variants={item} className="space-y-4">
-            <h2 className="text-2xl font-bold tracking-tight">Achievements</h2>
-            <div className="space-y-4 border-l-2 border-muted pl-4">
-                {achievements.map((item) => (
-                    <div key={item.year + item.title} className="relative">
-                        <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
-                        <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-                            <span className="text-sm text-muted-foreground font-mono">{item.year}</span>
-                            <span className="font-medium">{item.title}</span>
-                        </div>
-                    </div>
-                ))}
+  const achievements = [
+    { year: '2025', title: 'Launched Garden Core v1.0' },
+    { year: '2024', title: 'Contributed to Astro Ecosystem' },
+    { year: '2023', title: 'Senior Frontend Engineer Promotion' },
+  ];
+  return (
+    <motion.section variants={item} className="space-y-4">
+      <h2 className="text-2xl font-bold tracking-tight">Achievements</h2>
+      <div className="space-y-4 border-l-2 border-muted pl-4">
+        {achievements.map((item) => (
+          <div key={item.year + item.title} className="relative">
+            <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
+            <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+              <span className="text-sm text-muted-foreground font-mono">{item.year}</span>
+              <span className="font-medium">{item.title}</span>
             </div>
-        </motion.section>
-    );
+          </div>
+        ))}
+      </div>
+    </motion.section>
+  );
 }
 
 function ContactSection() {
-    return (
-        <motion.section variants={item} className="space-y-4">
-            <h2 className="text-2xl font-bold tracking-tight">Connect</h2>
-            <p className="text-muted-foreground">Feel free to reach out for collaborations or just a chat.</p>
-            <div className="flex gap-4 pt-2">
-                <SocialLink href="https://github.com" icon={Github} label="GitHub" />
-                <SocialLink href="https://twitter.com" icon={Twitter} label="Twitter" />
-                <SocialLink href="https://linkedin.com" icon={Linkedin} label="LinkedIn" />
-                <SocialLink href="mailto:hello@example.com" icon={Mail} label="Email" />
-            </div>
-        </motion.section>
-    );
+  return (
+    <motion.section variants={item} className="space-y-4">
+      <h2 className="text-2xl font-bold tracking-tight">Connect</h2>
+      <p className="text-muted-foreground">
+        Feel free to reach out for collaborations or just a chat.
+      </p>
+      <div className="flex gap-4 pt-2">
+        <SocialLink href="https://github.com" icon={Github} label="GitHub" />
+        <SocialLink href="https://twitter.com" icon={Twitter} label="Twitter" />
+        <SocialLink href="https://linkedin.com" icon={Linkedin} label="LinkedIn" />
+        <SocialLink href="mailto:hello@example.com" icon={Mail} label="Email" />
+      </div>
+    </motion.section>
+  );
 }
 
-function SocialLink({ href, icon: Icon, label }: { href: string, icon: any, label: string }) {
+function SocialLink({ href, icon: Icon, label }: { href: string; icon: any; label: string }) {
   return (
-    <a 
-      href={href} 
-      target="_blank" 
+    <a
+      href={href}
+      target="_blank"
       rel="noreferrer"
       className="p-3 bg-muted/50 rounded-full hover:bg-primary hover:text-primary-foreground transition-all hover:scale-110"
       aria-label={label}

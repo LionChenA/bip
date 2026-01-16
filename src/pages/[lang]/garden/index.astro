@@ -1,13 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
 import { GardenList } from '../../../components/garden/GardenList';
+import BaseLayout from '../../../modules/core/layouts/BaseLayout.astro';
 
 export function getStaticPaths() {
-  return [
-    { params: { lang: 'en' } },
-    { params: { lang: 'zh' } },
-  ];
+  return [{ params: { lang: 'en' } }, { params: { lang: 'zh' } }];
 }
 
 const { lang } = Astro.params;
@@ -15,15 +12,15 @@ const { lang } = Astro.params;
 // Pre-fetch data for SSG
 const allPosts = await getCollection('garden');
 const initialPosts = allPosts
-  .filter(p => p.data.lang === lang)
-  .map(p => ({
+  .filter((p) => p.data.lang === lang)
+  .map((p) => ({
     slug: p.slug,
     title: p.data.title,
     description: p.data.description,
     pubDate: p.data.pubDate.toISOString(),
     type: p.data.type,
     lang: p.data.lang,
-    tags: p.data.tags
+    tags: p.data.tags,
   }));
 ---
 
