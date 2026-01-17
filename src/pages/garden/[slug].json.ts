@@ -1,6 +1,6 @@
 import { getCollection } from 'astro:content';
 import { experimental_AstroContainer } from 'astro/container';
-import backlinks from '../../data/backlinks.json';
+import backlinks from '../../modules/garden/data/backlinks.json';
 
 export async function GET({ props }: { props: { entry: any } }) {
   const { entry } = props;
