@@ -1,5 +1,6 @@
 import { AnimatePresence, LayoutGroup } from 'framer-motion'; // Added LayoutGroup
 import { useCallback, useEffect, useState } from 'react';
+import { path } from '@/lib/routing';
 import { FilterBar } from './FilterBar';
 import { NoteItem } from './NoteItem';
 import { SVGTimeline } from './SVGTimeline';
@@ -43,7 +44,7 @@ export function GardenList({
   useEffect(() => {
     if (initialPosts.length > 0) return;
 
-    fetch('/garden/meta.json')
+    fetch(path('/garden/meta.json'))
       .then((res) => res.json())
       .then((data: GardenItem[]) => {
         setItems(data.filter((item) => item.lang === lang));
@@ -68,7 +69,7 @@ export function GardenList({
   const handleHover = async (slug: string) => {
     if (!contentCache[slug]) {
       try {
-        const res = await fetch(`/garden/${slug}.json`);
+        const res = await fetch(`${cleanBase}/garden/${slug}.json`);
         const data = await res.json();
         setContentCache((prev) => ({
           ...prev,
@@ -85,11 +86,11 @@ export function GardenList({
     }
 
     setExpandedSlug(slug);
-    window.history.pushState({ slug }, '', `/${lang}/garden/${slug}`);
+    window.history.pushState({ slug }, '', path(`/${lang}/garden/${slug}`));
 
     if (!contentCache[slug]) {
       try {
-        const res = await fetch(`/garden/${slug}.json`);
+        const res = await fetch(path(`/garden/${slug}.json`));
         const data = await res.json();
         setContentCache((prev) => ({
           ...prev,
@@ -107,7 +108,7 @@ export function GardenList({
       // If we have a specific slug (clicked close button), we can try to be smart about scrolling
       // But mostly, just collapsing state is enough as NoteItem handles the cleanup
       setExpandedSlug(null);
-      window.history.pushState(null, '', `/${lang}/garden`);
+      window.history.pushState(null, '', path(`/${lang}/garden`));
     },
     [lang]
   );
@@ -115,13 +116,19 @@ export function GardenList({
   // Popstate Handler
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname;
-      const match = path.match(new RegExp(`^/${lang}/garden/(.+)$`));
-      if (match) {
-        setExpandedSlug(match[1]);
-      } else {
-        setExpandedSlug(null);
+      const p = window.location.pathname;
+      const gardenPath = path(`/${lang}/garden/`);
+
+      // Extract slug from path like /bip/en/garden/some-slug
+      // If path starts with garden path, the rest is the slug
+      if (p.startsWith(gardenPath)) {
+        const slug = p.slice(gardenPath.length);
+        if (slug) {
+          setExpandedSlug(slug);
+          return;
+        }
       }
+      setExpandedSlug(null);
     };
 
     window.addEventListener('popstate', handlePopState);
