@@ -12,7 +12,8 @@ import remarkToc from 'remark-toc';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://bip.dev',
+  site: 'https://lionchena.github.io',
+  base: '/bip',
   vite: {
     plugins: [tailwindcss()],
   },
