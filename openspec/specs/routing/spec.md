@@ -10,9 +10,9 @@ All content routes MUST be prefixed with the language code (e.g., `/en/`, `/zh/`
 - **WHEN** accessing the home page in English
 - **THEN** the URL is `/en/`
 
-#### Scenario: Chinese Blog Index
-- **WHEN** accessing the blog list in Chinese
-- **THEN** the URL is `/zh/blog/`
+#### Scenario: Chinese Garden Index
+- **WHEN** accessing the garden list in Chinese
+- **THEN** the URL is `/zh/garden/`
 
 ### Requirement: Dynamic Route Generation
 The system SHALL generate static routes for all supported languages using `[lang]` parameters.
@@ -43,8 +43,8 @@ The system SHALL generate static pages for each tag used in the Garden.
 - **WHEN** user visits `/garden/tags/react`
 - **THEN** they see a list of all garden posts tagged with "react".
 
-### Requirement: Garden Alias
-The system SHALL expose `blog` content under the `/garden` URL path.
+### Requirement: Garden URL Structure
+The system SHALL expose Garden content under the `/garden` URL path.
 
 #### Scenario: URL Structure
 - **WHEN** user navigates content

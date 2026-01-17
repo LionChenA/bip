@@ -1,8 +1,29 @@
-# garden-ui Specification
+# garden Specification
 
 ## Purpose
-TBD - created by archiving change implement-garden-core. Update Purpose after archive.
+Specifies the Digital Garden feature set, including browsing, reading, and knowledge connections.
+
 ## Requirements
+
+### Requirement: Backlink Display
+Notes MUST show where they are cited.
+
+#### Scenario: Displaying References
+- **Given** a note is viewed (expanded or separate page)
+- **When** the `backlinks` data indicates other notes link to this one
+- **Then** a "Backlinks" or "Linked by" section MUST appear at the bottom of the content
+- **And** it MUST list the linking notes with clickable links.
+
+### Requirement: Backlink Generation
+The build process MUST generate a bidirectional link index.
+
+#### Scenario: Parsing Links
+- **Given** a set of MDX files in `src/content/garden/`
+- **When** the site builds
+- **Then** a process MUST scan all markdown links matching the pattern `[Link Text](/garden/{slug})`
+- **And** it MUST aggregate these references into a data structure mapping `target_slug` to `source_slug` (and context/title if possible)
+- **And** this data MUST be available to the runtime (e.g., as `backlinks.json` or a build-time import) to display "Linked References" on note pages.
+
 ### Requirement: Dual Timeline Navigation
 The Garden index page MUST feature a time-based navigation sidebar.
 
@@ -50,4 +71,3 @@ The system MUST optimize content delivery through tiered data loading.
 - **When** the user hovers over a NoteItem for >100ms
 - **Then** the system MUST background-fetch the full MDX JSON
 - **And** it MUST pre-load backlinks for notes referenced in the current viewport or open article.
-

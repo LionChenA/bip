@@ -12,19 +12,7 @@ const garden = defineCollection({
     tags: z.array(z.string()).default([]),
     lang: z.enum(['en', 'zh']).default('en'),
     type: z
-      .enum([
-        'evergreen',
-        'literature',
-        'article',
-        'note',
-        'thought',
-        'essay',
-        'snippet',
-        'Essay',
-        'Note',
-        'Snippet',
-        'Thought',
-      ])
+      .enum(['evergreen', 'literature', 'article', 'note', 'thought', 'essay', 'snippet'])
       .default('article'),
   }),
 });

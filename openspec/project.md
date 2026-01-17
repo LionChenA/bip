@@ -1,7 +1,7 @@
 # Project Context
 
 ## Purpose
-A personal website serving as a **Blog, Portfolio, and CV**.
+A personal website serving as a **Digital Garden, Portfolio, and CV**.
 It aims to showcase the user's technical skills, creative projects, and thoughts through a **minimalist yet interactive** interface.
 The site serves as a professional identity hub for a developer/engineer.
 
@@ -22,6 +22,27 @@ The site serves as a professional identity hub for a developer/engineer.
   - Languages: Chinese (Default), English.
   - Strategy: Sub-path routing (e.g., `/` for ZH, `/en/` for EN).
 
+## Modular Architecture
+
+### Infra Module Charter
+The `infra` module (`src/modules/infra`) encapsulates shared technical foundations.
+- **Responsibility**: Layouts, SEO, Design System primitives (UI kit), and global styles.
+- **Non-Goal**: Domain-specific logic or content.
+- **Exports**: Only generic components and utilities used by multiple domains.
+
+### Module Structure Guidelines
+All domain features reside in `src/modules/<domain>/`.
+- **Structure**:
+  - `components/`: React/Astro components private to the module.
+  - `data/`: Data fetching, transformations, and Zod schemas.
+  - `pages/`: (Optional) Module-specific routes if decoupled from global routing.
+  - `index.ts`: Public API barrel file. **Only** import from here.
+
+### Dependency Rules
+- **Strict Encapsulation**: Modules (e.g., `garden`, `work`) MUST NOT import from each other directly.
+- **Shared Access**: Modules MAY import from `infra`.
+- **Verticals**: `pages/` (the app root) orchestrates modules by importing from their public `index.ts`.
+
 ## Project Conventions
 
 ### Code Style
@@ -32,7 +53,7 @@ The site serves as a professional identity hub for a developer/engineer.
 - **File Structure**:
   - `@/` maps to `./src/`
   - Components: `src/components/ui` (atomic), `src/components/shared` (layout-related).
-  - Content: `src/content/{collection}/{lang}/` (e.g., `src/content/blog/zh/my-post.md`).
+  - Content: `src/content/{collection}/{lang}/` (e.g., `src/content/garden/zh/my-post.md`).
 
 ### Architecture Patterns
 - **Navigation**:

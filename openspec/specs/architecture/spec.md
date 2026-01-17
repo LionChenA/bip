@@ -4,27 +4,33 @@
 TBD - created by archiving change scaffold-modular-architecture. Update Purpose after archive.
 ## Requirements
 ### Requirement: Modular Directory Structure
-The application code MUST be organized into feature-specific modules under `src/modules/` and generic UI components under `src/components/ui/`.
+The application code MUST be organized into **Domain Modules** under `src/modules/`.
+A Domain Module is a self-contained unit of business logic and UI.
 
-#### Scenario: Module Separation
-- **WHEN** a developer adds a new blog feature
-- **THEN** the code is placed in `src/modules/blog/`
-- **AND** it does not mix with `src/modules/portfolio/`
-
-#### Scenario: Shared Core Components
-- **WHEN** looking for the site Header or Footer
-- **THEN** they are found in `src/modules/core/components`
+#### Scenario: Module Anatomy
+- **WHEN** a module (e.g., `garden`) is created
+- **THEN** it MUST be located at `src/modules/garden/`
+- **AND** it MAY contain subdirectories: `components/`, `lib/`, `services/`, `types/`
+- **AND** it MUST NOT depend on other modules' internal implementation details (only public APIs).
 
 ### Requirement: Component Organization
-All React and Astro components MUST be located in one of the following directories:
-- `src/components/ui/` (Atomic Shadcn components)
-- `src/components/shared/` (Generic layout components)
-- `src/modules/<module-name>/components/` (Feature-specific components)
-Components SHALL NOT exist directly in `src/components/` root.
+All React and Astro components MUST be strictly categorized:
+- `src/components/ui/`: **Atomic** Shadcn/Base-UI primitives (Buttons, Inputs).
+- `src/components/shared/`: **Layout** and Composition components shared across multiple modules (Header, Footer).
+- `src/modules/<domain>/components/`: **Domain-Specific** components (e.g., `GardenTimeline`, `PortfolioCard`).
 
-#### Scenario: Forbidden Root Components
-- **WHEN** a component is placed in `src/components/MyComponent.astro`
-- **THEN** it violates the structural constraint
+#### Scenario: Forbidden Global Components
+- **WHEN** a developer creates a feature-specific component (e.g., `SEO.astro`)
+- **THEN** it MUST NOT exist in `src/components/` root.
+- **AND** if it is used globally, it SHOULD be in `src/modules/core/` or `src/components/shared/`.
+
+### Requirement: Domain Logic Encapsulation
+Business logic specific to a domain MUST reside within that module's directory.
+
+#### Scenario: Backlinks Logic
+- **WHEN** logic exists for parsing backlinks (specific to Garden)
+- **THEN** it MUST be located in `src/modules/garden/lib/` or `src/modules/garden/utils/`
+- **AND** it MUST NOT be placed in the global `src/lib/` (which is reserved for generic utilities).
 
 ### Requirement: Module Definitions
 The system SHALL support the following initial modules:
