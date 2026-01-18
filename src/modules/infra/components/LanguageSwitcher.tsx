@@ -13,10 +13,10 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ currentLang,
   return (
     <a
       href={targetPath}
-      className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-md hover:bg-secondary transition-colors"
+      className="flex items-center gap-1 rounded-md px-3 py-1.5 font-medium text-sm transition-colors hover:bg-secondary"
       aria-label={`Switch to ${targetLang === 'en' ? 'English' : 'Chinese'}`}
     >
-      <IoLanguage className="w-4 h-4" />
+      <IoLanguage className="h-4 w-4" />
       <span>{targetLang.toUpperCase()}</span>
     </a>
   );

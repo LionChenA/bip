@@ -57,8 +57,8 @@ export function StackTab({ projects }: StackTabProps) {
   }, [projects, selectedTechId]);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="fade-in animate-in space-y-8 duration-500">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {stats.map((tech) => {
           const Icon = tech.icon;
           const isSelected = selectedTechId === tech.id;
@@ -69,17 +69,15 @@ export function StackTab({ projects }: StackTabProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedTechId(isSelected ? null : tech.id)}
-              className={`
-                cursor-pointer p-4 rounded-xl border transition-colors flex flex-col items-center gap-3
-                ${
-                  isSelected
-                    ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                    : 'border-border bg-card hover:border-primary/50'
-                }
+              className={`flex cursor-pointer flex-col items-center gap-3 rounded-xl border p-4 transition-colors ${
+                isSelected
+                  ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                  : 'border-border bg-card hover:border-primary/50'
+              }
               `}
             >
               <div
-                className="p-3 rounded-full bg-muted/50 text-3xl"
+                className="rounded-full bg-muted/50 p-3 text-3xl"
                 style={{ color: isSelected ? tech.color : 'currentColor' }}
               >
                 <Icon />
@@ -87,14 +85,14 @@ export function StackTab({ projects }: StackTabProps) {
               <div className="text-center">
                 <div className="font-medium text-sm">{tech.label}</div>
                 {tech.count > 0 && (
-                  <div className="text-xs text-muted-foreground mt-1">
+                  <div className="mt-1 text-muted-foreground text-xs">
                     {tech.count} project{tech.count !== 1 ? 's' : ''}
                   </div>
                 )}
               </div>
 
               {tech.count > 0 && (
-                <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden mt-1">
+                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${tech.percentage}%` }}
@@ -115,25 +113,25 @@ export function StackTab({ projects }: StackTabProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="p-6 border rounded-xl bg-muted/30"
+            className="rounded-xl border bg-muted/30 p-6"
           >
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <h3 className="mb-4 flex items-center gap-2 font-semibold text-lg">
               Used in {selectedProjects.length} projects
               <Badge variant="outline">{stack[selectedTechId]?.label}</Badge>
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {selectedProjects.map((project) => (
                 <a
                   key={project.slug}
                   href={project.data.link || '#'}
                   target={project.data.link ? '_blank' : undefined}
-                  className="block group"
+                  className="group block"
                 >
-                  <Card className="p-4 hover:border-primary/50 transition-colors h-full">
-                    <div className="font-medium group-hover:text-primary transition-colors">
+                  <Card className="h-full p-4 transition-colors hover:border-primary/50">
+                    <div className="font-medium transition-colors group-hover:text-primary">
                       {project.data.title}
                     </div>
-                    <div className="text-sm text-muted-foreground line-clamp-1">
+                    <div className="line-clamp-1 text-muted-foreground text-sm">
                       {project.data.description}
                     </div>
                   </Card>

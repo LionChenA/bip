@@ -26,6 +26,14 @@
       "style": {
         "noDefaultExport": "off"
       },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "options": {
+            "functions": ["cva", "cn"]
+          }
+        }
+      },
       "suspicious": {
         "noExplicitAny": "off"
       }

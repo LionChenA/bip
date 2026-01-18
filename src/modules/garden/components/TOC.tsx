@@ -33,14 +33,14 @@ export function TOC({ content }: TOCProps) {
   if (headings.length === 0) return null;
 
   return (
-    <div className="fixed right-8 top-32 w-48 hidden xl:block">
-      <h4 className="text-sm font-bold mb-4 text-muted-foreground">On this page</h4>
+    <div className="fixed top-32 right-8 hidden w-48 xl:block">
+      <h4 className="mb-4 font-bold text-muted-foreground text-sm">On this page</h4>
       <ul className="space-y-2 text-sm">
         {headings.map((heading) => (
           <li key={heading.id} style={{ paddingLeft: (heading.level - 2) * 12 }}>
             <a
               href={`#${heading.id}`}
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
               onClick={(e) => {
                 e.preventDefault();
                 const el = document.getElementById(heading.id);

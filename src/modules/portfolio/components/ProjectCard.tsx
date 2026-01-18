@@ -11,18 +11,18 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const { title, description, image, tags, link } = project.data;
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden hover:shadow-md transition-shadow">
+    <Card className="flex h-full flex-col overflow-hidden transition-shadow hover:shadow-md">
       {image && (
         <div className="aspect-video w-full overflow-hidden">
           <img
             src={image}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           />
         </div>
       )}
       <CardHeader>
-        <div className="flex justify-between items-start gap-2">
+        <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-xl">{title}</CardTitle>
           {link && (
             <a

@@ -109,11 +109,11 @@ export const Hero: React.FC<HeroProps> = ({
   }, []);
 
   return (
-    <div className="relative w-full h-[80vh] overflow-hidden flex items-center justify-center">
+    <div className="relative flex h-[80vh] w-full items-center justify-center overflow-hidden">
       {/* Background Grid */}
       <div
         ref={gridRef}
-        className="absolute inset-0 grid gap-1 pointer-events-none z-0"
+        className="pointer-events-none absolute inset-0 z-0 grid gap-1"
         style={{
           gridTemplateColumns: 'repeat(var(--columns), 1fr)',
           gridTemplateRows: 'repeat(var(--rows), 1fr)',
@@ -121,11 +121,11 @@ export const Hero: React.FC<HeroProps> = ({
       ></div>
 
       {/* Foreground Content */}
-      <div className="relative z-10 text-center pointer-events-none select-none mix-blend-difference text-primary-foreground">
-        <h1 className="text-6xl md:text-9xl font-bold tracking-tighter mb-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+      <div className="pointer-events-none relative z-10 select-none text-center text-primary-foreground mix-blend-difference">
+        <h1 className="fade-in slide-in-from-bottom-10 mb-4 animate-in font-bold text-6xl tracking-tighter duration-1000 md:text-9xl">
           {title}
         </h1>
-        <p className="text-xl md:text-2xl font-mono opacity-80 animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-300">
+        <p className="fade-in slide-in-from-bottom-5 animate-in font-mono text-xl opacity-80 delay-300 duration-1000 md:text-2xl">
           {subtitle}
         </p>
       </div>

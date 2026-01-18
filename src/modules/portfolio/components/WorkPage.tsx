@@ -14,17 +14,17 @@ export function WorkPage({ projects }: WorkPageProps) {
   return (
     <div className="space-y-12">
       <div className="flex justify-center">
-        <div className="flex items-center p-1 bg-muted/50 rounded-full border border-border">
+        <div className="flex items-center rounded-full border border-border bg-muted/50 p-1">
           <Button
             variant={activeTab === 'portfolio' ? 'default' : 'ghost'}
-            className="rounded-full px-6 h-9 transition-all"
+            className="h-9 rounded-full px-6 transition-all"
             onClick={() => setActiveTab('portfolio')}
           >
             Portfolio
           </Button>
           <Button
             variant={activeTab === 'stack' ? 'default' : 'ghost'}
-            className="rounded-full px-6 h-9 transition-all"
+            className="h-9 rounded-full px-6 transition-all"
             onClick={() => setActiveTab('stack')}
           >
             Stack & Skills

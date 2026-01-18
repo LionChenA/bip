@@ -83,23 +83,23 @@ export function NoteItem({
         }
       }}
       className={cn(
-        'group rounded-xl border bg-card text-card-foreground transition-colors duration-300 relative outline-none',
+        'group relative rounded-xl border bg-card text-card-foreground outline-none transition-colors duration-300',
         isExpanded
-          ? 'border-primary/20 shadow-2xl ring-1 ring-primary/5 z-20 my-6 overflow-visible'
-          : 'cursor-pointer hover:border-primary/50 hover:shadow-lg active:scale-[0.99] z-0 overflow-hidden'
+          ? 'z-20 my-6 overflow-visible border-primary/20 shadow-2xl ring-1 ring-primary/5'
+          : 'z-0 cursor-pointer overflow-hidden hover:border-primary/50 hover:shadow-lg active:scale-[0.99]'
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={() => !isExpanded && onExpand(slug)}
     >
-      <div className={cn('ease-in-out', isExpanded ? 'py-0 px-5' : 'py-4 px-5')}>
+      <div className={cn('ease-in-out', isExpanded ? 'px-5 py-0' : 'px-5 py-4')}>
         <motion.div
           layout
           transition={UNIFIED_TRANSITION}
           className={cn(
-            'flex justify-between items-start gap-3 z-30',
+            'z-30 flex items-start justify-between gap-3',
             isExpanded
-              ? 'sticky top-0 bg-card/95 backdrop-blur-md -mx-5 px-5 py-4 border-b border-border/10 rounded-t-xl'
+              ? 'sticky top-0 -mx-5 rounded-t-xl border-border/10 border-b bg-card/95 px-5 py-4 backdrop-blur-md'
               : 'mb-1'
           )}
         >
@@ -107,7 +107,7 @@ export function NoteItem({
             layout
             transition={UNIFIED_TRANSITION}
             className={cn(
-              'font-bold leading-tight origin-left',
+              'origin-left font-bold leading-tight',
               isExpanded ? 'text-3xl' : 'text-lg group-hover:text-primary'
             )}
           >
@@ -135,9 +135,9 @@ export function NoteItem({
                   onCollapse();
                 }
               }}
-              className="shrink-0 p-2 rounded-full hover:bg-muted/50 transition-colors -mt-1 -mr-2"
+              className="-mt-1 -mr-2 shrink-0 rounded-full p-2 transition-colors hover:bg-muted/50"
             >
-              <span className="text-xs font-mono mr-2 opacity-50 hidden sm:inline">ESC</span>✕
+              <span className="mr-2 hidden font-mono text-xs opacity-50 sm:inline">ESC</span>✕
             </motion.button>
           )}
         </motion.div>
@@ -146,14 +146,14 @@ export function NoteItem({
           layout
           transition={UNIFIED_TRANSITION}
           className={cn(
-            'flex items-center gap-2 flex-wrap text-[10px] sm:text-xs font-mono text-muted-foreground mb-2'
+            'mb-2 flex flex-wrap items-center gap-2 font-mono text-[10px] text-muted-foreground sm:text-xs'
           )}
         >
-          <span className="uppercase tracking-widest text-primary/70">{type}</span>
+          <span className="text-primary/70 uppercase tracking-widest">{type}</span>
 
           {tags && tags.length > 0 && (
             <>
-              <span className="w-1 h-1 rounded-full bg-border" />
+              <span className="h-1 w-1 rounded-full bg-border" />
               <div className="flex gap-2">
                 {tags.map((tag) => (
                   <span key={tag} className="opacity-70">
@@ -186,7 +186,7 @@ export function NoteItem({
               marginBottom: '16px',
             }}
             exit={{ scaleX: 0, opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
-            className="w-full bg-border origin-left"
+            className="w-full origin-left bg-border"
           />
         )}
 
@@ -199,7 +199,7 @@ export function NoteItem({
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <p className="text-sm text-muted-foreground line-clamp-2 pb-1 pt-1">{description}</p>
+              <p className="line-clamp-2 pt-1 pb-1 text-muted-foreground text-sm">{description}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -222,9 +222,9 @@ export function NoteItem({
                 marginTop: 0,
                 transition: { duration: 0.3, ease: 'easeInOut' }, // Match the general speed
               }}
-              className="prose prose-lg dark:prose-invert max-w-none pb-12 overflow-hidden" // overflow-hidden is crucial for height anim
+              className="prose prose-lg dark:prose-invert max-w-none overflow-hidden pb-12" // overflow-hidden is crucial for height anim
             >
-              <div className="text-xl leading-relaxed mb-8 text-muted-foreground italic font-serif border-l-4 border-primary/20 pl-5">
+              <div className="mb-8 border-primary/20 border-l-4 pl-5 font-serif text-muted-foreground text-xl italic leading-relaxed">
                 {description}
               </div>
 
@@ -233,11 +233,11 @@ export function NoteItem({
                   {/* biome-ignore lint/security/noDangerouslySetInnerHtml: MDX content is sanitized at build time */}
                   <div dangerouslySetInnerHTML={{ __html: content }} />
                   {backlinks && backlinks.length > 0 && (
-                    <div className="mt-12 pt-6 border-t border-border/40">
-                      <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4">
+                    <div className="mt-12 border-border/40 border-t pt-6">
+                      <h4 className="mb-4 font-bold text-muted-foreground text-sm uppercase tracking-widest">
                         Backlinks & References
                       </h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         {backlinks.map((link) => (
                           <button
                             key={link.slug}
@@ -246,12 +246,12 @@ export function NoteItem({
                               e.stopPropagation();
                               onExpand(link.slug);
                             }}
-                            className="text-left p-3 rounded-xl border bg-card/50 hover:bg-card hover:border-primary transition-all group/link"
+                            className="group/link rounded-xl border bg-card/50 p-3 text-left transition-all hover:border-primary hover:bg-card"
                           >
-                            <span className="text-[10px] font-mono text-muted-foreground block mb-1 uppercase tracking-tight">
+                            <span className="mb-1 block font-mono text-[10px] text-muted-foreground uppercase tracking-tight">
                               Referenced In
                             </span>
-                            <span className="font-bold text-sm group-hover/link:text-primary transition-colors">
+                            <span className="font-bold text-sm transition-colors group-hover/link:text-primary">
                               {link.title}
                             </span>
                           </button>
@@ -261,9 +261,9 @@ export function NoteItem({
                   )}
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center p-12 space-y-4">
-                  <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  <p className="text-sm text-muted-foreground animate-pulse">
+                <div className="flex flex-col items-center justify-center space-y-4 p-12">
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  <p className="animate-pulse text-muted-foreground text-sm">
                     Loading garden note...
                   </p>
                 </div>

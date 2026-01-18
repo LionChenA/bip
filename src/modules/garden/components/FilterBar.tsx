@@ -16,17 +16,17 @@ export function FilterBar({ currentFilter, onFilterChange }: FilterBarProps) {
   ];
 
   return (
-    <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+    <div className="mb-8 flex gap-2 overflow-x-auto pb-2">
       {filters.map((filter) => (
         <button
           key={filter.value}
           type="button"
           onClick={() => onFilterChange(filter.value)}
           className={cn(
-            'px-3 py-1 text-sm rounded-full transition-colors border',
+            'rounded-full border px-3 py-1 text-sm transition-colors',
             currentFilter === filter.value
-              ? 'bg-primary text-primary-foreground border-primary'
-              : 'bg-background text-muted-foreground border-border hover:border-primary/50'
+              ? 'border-primary bg-primary text-primary-foreground'
+              : 'border-border bg-background text-muted-foreground hover:border-primary/50'
           )}
         >
           {filter.label}

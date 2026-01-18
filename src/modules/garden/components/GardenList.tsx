@@ -69,7 +69,7 @@ export function GardenList({
   const handleHover = async (slug: string) => {
     if (!contentCache[slug]) {
       try {
-        const res = await fetch(`${cleanBase}/garden/${slug}.json`);
+        const res = await fetch(path(`/garden/${slug}.json`));
         const data = await res.json();
         setContentCache((prev) => ({
           ...prev,
@@ -151,12 +151,12 @@ export function GardenList({
     <div className="flex min-h-screen">
       <SVGTimeline items={items} activeSlug={expandedSlug || undefined} />
 
-      <main className="flex-1 lg:ml-24 p-4 md:p-8 max-w-4xl mx-auto">
+      <main className="mx-auto max-w-4xl flex-1 p-4 md:p-8 lg:ml-24">
         <header className="mb-10 pt-20">
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+          <h1 className="mb-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text font-bold text-4xl text-transparent">
             Digital Garden
           </h1>
-          <p className="text-xl text-muted-foreground mb-6">
+          <p className="mb-6 text-muted-foreground text-xl">
             A collection of evolving notes, thoughts, and explorations.
           </p>
           <FilterBar currentFilter={filter} onFilterChange={setFilter} />
@@ -165,7 +165,7 @@ export function GardenList({
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-48 rounded-xl bg-muted/20 animate-pulse" />
+              <div key={i} className="h-48 animate-pulse rounded-xl bg-muted/20" />
             ))}
           </div>
         ) : (
@@ -193,7 +193,7 @@ export function GardenList({
 
         <AnimatePresence>
           {expandedSlug && contentCache[expandedSlug] && (
-            <div className="z-[60] relative">
+            <div className="relative z-[60]">
               <TOC content={contentCache[expandedSlug].content} />
             </div>
           )}

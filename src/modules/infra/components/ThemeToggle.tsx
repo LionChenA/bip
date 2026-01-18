@@ -59,20 +59,20 @@ export const ThemeToggle = () => {
   };
 
   if (!mounted) {
-    return <div className="w-9 h-9" />; // Prevent hydration mismatch
+    return <div className="h-9 w-9" />; // Prevent hydration mismatch
   }
 
   return (
     <button
       type="button"
       onClick={cycleTheme}
-      className="p-2 rounded-full hover:bg-secondary transition-colors relative overflow-hidden group text-muted-foreground hover:text-foreground"
+      className="group relative overflow-hidden rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
       aria-label={`Current theme: ${theme}. Click to switch.`}
     >
       <div className="relative z-10">
-        {theme === 'light' && <FiSun className="w-5 h-5" />}
-        {theme === 'dark' && <FiMoon className="w-5 h-5" />}
-        {theme === 'system' && <FiMonitor className="w-5 h-5" />}
+        {theme === 'light' && <FiSun className="h-5 w-5" />}
+        {theme === 'dark' && <FiMoon className="h-5 w-5" />}
+        {theme === 'system' && <FiMonitor className="h-5 w-5" />}
       </div>
     </button>
   );

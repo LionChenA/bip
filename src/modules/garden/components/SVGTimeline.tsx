@@ -81,7 +81,7 @@ export function SVGTimeline({ items, activeSlug }: SVGTimelineProps) {
   }, [items]);
 
   return (
-    <div className="fixed left-0 top-0 h-full w-48 hidden lg:flex flex-col py-20 pl-8 select-none z-10 overflow-y-auto scrollbar-hide">
+    <div className="scrollbar-hide fixed top-0 left-0 z-10 hidden h-full w-48 select-none flex-col overflow-y-auto py-20 pl-8 lg:flex">
       <svg
         width="150"
         height={processedData.totalHeight}
@@ -119,12 +119,12 @@ export function SVGTimeline({ items, activeSlug }: SVGTimelineProps) {
                     cy={el.y}
                     initial={{ r: 4 }}
                     whileHover={{ r: 8 }}
-                    className="fill-primary/60 group-hover:fill-primary transition-colors"
+                    className="fill-primary/60 transition-colors group-hover:fill-primary"
                   />
                   <text
                     x="40"
                     y={el.y + 5}
-                    className="text-xs font-bold fill-muted-foreground group-hover:fill-foreground font-mono uppercase tracking-tighter transition-colors"
+                    className="fill-muted-foreground font-bold font-mono text-xs uppercase tracking-tighter transition-colors group-hover:fill-foreground"
                   >
                     {el.label}
                   </text>
@@ -146,8 +146,8 @@ export function SVGTimeline({ items, activeSlug }: SVGTimelineProps) {
                     y={el.y + 3}
                     className={
                       isActive
-                        ? 'text-[10px] fill-primary font-bold font-mono uppercase tracking-widest'
-                        : 'text-[10px] fill-muted-foreground/50 group-hover:fill-muted-foreground font-mono uppercase tracking-widest transition-colors'
+                        ? 'fill-primary font-bold font-mono text-[10px] uppercase tracking-widest'
+                        : 'fill-muted-foreground/50 font-mono text-[10px] uppercase tracking-widest transition-colors group-hover:fill-muted-foreground'
                     }
                   >
                     {el.label}

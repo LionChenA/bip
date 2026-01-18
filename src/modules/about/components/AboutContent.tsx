@@ -25,7 +25,7 @@ export function AboutContent() {
       variants={container}
       initial="hidden"
       animate="show"
-      className="space-y-16 max-w-3xl mx-auto"
+      className="mx-auto max-w-3xl space-y-16"
     >
       <BioSection />
       <InterestsSection />
@@ -39,8 +39,8 @@ export function AboutContent() {
 function BioSection() {
   return (
     <motion.section variants={item} className="space-y-4">
-      <h2 className="text-2xl font-bold tracking-tight">Who Am I</h2>
-      <div className="prose dark:prose-invert text-muted-foreground text-lg leading-relaxed">
+      <h2 className="font-bold text-2xl tracking-tight">Who Am I</h2>
+      <div className="prose dark:prose-invert text-lg text-muted-foreground leading-relaxed">
         <p>
           I am a dedicated software engineer with a passion for building beautiful, functional, and
           scalable web applications. With a strong foundation in modern web technologies, I bridge
@@ -66,13 +66,13 @@ function InterestsSection() {
   ];
   return (
     <motion.section variants={item} className="space-y-4">
-      <h2 className="text-2xl font-bold tracking-tight">Interests</h2>
+      <h2 className="font-bold text-2xl tracking-tight">Interests</h2>
       <div className="flex flex-wrap gap-2">
         {interests.map((interest) => (
           <Badge
             key={interest}
             variant="secondary"
-            className="px-3 py-1 text-sm bg-muted/50 hover:bg-muted transition-colors"
+            className="bg-muted/50 px-3 py-1 text-sm transition-colors hover:bg-muted"
           >
             {interest}
           </Badge>
@@ -85,17 +85,17 @@ function InterestsSection() {
 function TechStackSection() {
   return (
     <motion.section variants={item} className="space-y-6">
-      <h2 className="text-2xl font-bold tracking-tight">Tech Stack</h2>
-      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4">
+      <h2 className="font-bold text-2xl tracking-tight">Tech Stack</h2>
+      <div className="grid grid-cols-4 gap-4 sm:grid-cols-6 md:grid-cols-8">
         {Object.values(stack).map((tech) => {
           const Icon = tech.icon;
           return (
             <div
               key={tech.id}
-              className="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors group"
+              className="group flex flex-col items-center gap-2 rounded-lg p-2 transition-colors hover:bg-muted/50"
               title={tech.label}
             >
-              <div className="text-2xl text-muted-foreground group-hover:text-foreground transition-colors">
+              <div className="text-2xl text-muted-foreground transition-colors group-hover:text-foreground">
                 <Icon />
               </div>
             </div>
@@ -114,13 +114,13 @@ function AchievementsSection() {
   ];
   return (
     <motion.section variants={item} className="space-y-4">
-      <h2 className="text-2xl font-bold tracking-tight">Achievements</h2>
-      <div className="space-y-4 border-l-2 border-muted pl-4">
+      <h2 className="font-bold text-2xl tracking-tight">Achievements</h2>
+      <div className="space-y-4 border-muted border-l-2 pl-4">
         {achievements.map((item) => (
           <div key={item.year + item.title} className="relative">
-            <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
-            <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-              <span className="text-sm text-muted-foreground font-mono">{item.year}</span>
+            <div className="absolute top-1.5 -left-[21px] h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
+              <span className="font-mono text-muted-foreground text-sm">{item.year}</span>
               <span className="font-medium">{item.title}</span>
             </div>
           </div>
@@ -133,7 +133,7 @@ function AchievementsSection() {
 function ContactSection() {
   return (
     <motion.section variants={item} className="space-y-4">
-      <h2 className="text-2xl font-bold tracking-tight">Connect</h2>
+      <h2 className="font-bold text-2xl tracking-tight">Connect</h2>
       <p className="text-muted-foreground">
         Feel free to reach out for collaborations or just a chat.
       </p>
@@ -153,7 +153,7 @@ function SocialLink({ href, icon: Icon, label }: { href: string; icon: any; labe
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="p-3 bg-muted/50 rounded-full hover:bg-primary hover:text-primary-foreground transition-all hover:scale-110"
+      className="rounded-full bg-muted/50 p-3 transition-all hover:scale-110 hover:bg-primary hover:text-primary-foreground"
       aria-label={label}
     >
       <Icon size={20} />
