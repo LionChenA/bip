@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { stack, type TechItem } from '@/data/stack';
+import { stack, type TechItem } from '@/modules/portfolio/data/stack';
 
 interface StackTabProps {
   projects: CollectionEntry<'portfolio'>[];

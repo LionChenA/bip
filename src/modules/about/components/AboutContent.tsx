@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Mail } from 'lucide-react';
 import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 import { Badge } from '@/components/ui/badge';
-import { stack } from '@/data/stack';
+import { stack } from '@/modules/portfolio/data/stack';
 
 const container = {
   hidden: { opacity: 0 },

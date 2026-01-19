@@ -24,8 +24,8 @@ The site serves as a professional identity hub for a developer/engineer.
 
 ## Modular Architecture
 
-### Infra Module Charter
-The `infra` module (`src/modules/infra`) encapsulates shared technical foundations.
+### Core Module Charter
+The `core` module (`src/modules/core`) encapsulates shared technical foundations.
 - **Responsibility**: Layouts, SEO, Design System primitives (UI kit), and global styles.
 - **Non-Goal**: Domain-specific logic or content.
 - **Exports**: Only generic components and utilities used by multiple domains.
@@ -40,7 +40,7 @@ All domain features reside in `src/modules/<domain>/`.
 
 ### Dependency Rules
 - **Strict Encapsulation**: Modules (e.g., `garden`, `work`) MUST NOT import from each other directly.
-- **Shared Access**: Modules MAY import from `infra`.
+- **Shared Access**: Modules MAY import from `core`.
 - **Verticals**: `pages/` (the app root) orchestrates modules by importing from their public `index.ts`.
 
 ## Project Conventions

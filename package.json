@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "pnpm gen:garden && astro dev",
     "build": "pnpm gen:garden && astro build",
-    "gen:garden": "tsx src/modules/garden/generate-backlinks.ts",
+    "gen:garden": "tsx src/modules/garden/scripts/generate-backlinks.ts",
     "preview": "astro preview",
     "astro": "astro",
     "check": "biome check --write . && astro check"
