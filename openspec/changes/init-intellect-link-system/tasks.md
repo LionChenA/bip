@@ -13,3 +13,11 @@
 
 ## 4. Documentation
 - [ ] 4.1 Update `openspec/specs/content/spec.md` with distributed content requirements.
+
+## 5. Conflict Resolution (Deferred)
+- [ ] 5.1 Address schema conflict: `garden` vs `learning` separation might require a migration strategy for existing content.
+- [ ] 5.2 Address "Knowledge Bridge": Bi-directional `reference()` fields need to be synchronized with `populate-personal-narrative` stack definitions.
+
+## 6. Submodule Engineering Challenges
+- [ ] 6.1 Research: Image path resolution for submodules (Relative paths in MDX break when moved).
+- [ ] 6.2 Ops: Configure CI/CD (GitHub Actions) with proper tokens to fetch private/public submodules.
