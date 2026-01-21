@@ -1,4 +1,4 @@
-## MODIFIED Requirements
+## ADDED Requirements
 ### Requirement: Portfolio Schema
 The portfolio content schema MUST support academic achievements as first-class citizens.
 
