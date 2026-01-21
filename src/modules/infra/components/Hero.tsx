@@ -2,17 +2,17 @@ import { animate, stagger } from 'animejs';
 import type React from 'react';
 import { useEffect, useRef } from 'react';
 
+import { siteConfig } from '../data/siteConfig';
+
 interface HeroProps {
   title?: string;
   subtitle?: string;
   lang?: string;
 }
 
-export const Hero: React.FC<HeroProps> = ({
-  title = "HELLO, I'M SISYPHUS",
-  subtitle = 'Engineer. Builder. Minimalist.',
-  lang: _lang = 'en',
-}) => {
+export const Hero: React.FC<HeroProps> = ({ title, subtitle, lang = 'en' }) => {
+  const displayTitle = title || `HELLO, I'M ${siteConfig.name.toUpperCase()}`;
+  const displaySubtitle = subtitle || (lang === 'zh' ? '终身学习者' : siteConfig.title);
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -123,10 +123,10 @@ export const Hero: React.FC<HeroProps> = ({
       {/* Foreground Content */}
       <div className="pointer-events-none relative z-10 select-none text-center text-primary-foreground mix-blend-difference">
         <h1 className="fade-in slide-in-from-bottom-10 mb-4 animate-in font-bold text-6xl tracking-tighter duration-1000 md:text-9xl">
-          {title}
+          {displayTitle}
         </h1>
         <p className="fade-in slide-in-from-bottom-5 animate-in font-mono text-xl opacity-80 delay-300 duration-1000 md:text-2xl">
-          {subtitle}
+          {displaySubtitle}
         </p>
       </div>
     </div>

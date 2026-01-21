@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { stack, type TechItem } from '@/modules/portfolio/data/stack';
+import { type StackCategory, stack, type TechItem } from '@/modules/portfolio/data/stack';
 
 interface StackTabProps {
   projects: CollectionEntry<'portfolio'>[];
@@ -17,15 +17,12 @@ interface StackStat extends TechItem {
 export function StackTab({ projects }: StackTabProps) {
   const [selectedTechId, setSelectedTechId] = useState<string | null>(null);
 
-  const stats = useMemo(() => {
-    // 1. Count usage
+  const statsByCategory = useMemo(() => {
     const counts: Record<string, number> = {};
     let maxCount = 0;
 
     projects.forEach((p) => {
-      // Check both tags and stack field for compatibility
       const items = [...(p.data.tags || []), ...(p.data.stack || [])];
-      // deduplicate
       const uniqueItems = new Set(items.map((i) => i.toLowerCase()));
 
       uniqueItems.forEach((item) => {
@@ -34,18 +31,30 @@ export function StackTab({ projects }: StackTabProps) {
       });
     });
 
-    // 2. Map to stack definitions
-    const result: StackStat[] = Object.values(stack).map((item) => {
+    const result: Record<StackCategory, StackStat[]> = {
+      Code: [],
+      AI: [],
+      Course: [],
+      Environment: [],
+    };
+
+    Object.values(stack).forEach((item) => {
       const count = counts[item.id] || 0;
-      return {
+      const stat: StackStat = {
         ...item,
         count,
         percentage: maxCount > 0 ? (count / maxCount) * 100 : 0,
       };
+      result[item.category].push(stat);
     });
 
-    // Sort by count desc, then name
-    return result.sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+    Object.keys(result).forEach((cat) => {
+      result[cat as StackCategory].sort(
+        (a, b) => b.count - a.count || a.label.localeCompare(b.label)
+      );
+    });
+
+    return result;
   }, [projects]);
 
   const selectedProjects = useMemo(() => {
@@ -57,55 +66,57 @@ export function StackTab({ projects }: StackTabProps) {
   }, [projects, selectedTechId]);
 
   return (
-    <div className="fade-in animate-in space-y-8 duration-500">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {stats.map((tech) => {
-          const Icon = tech.icon;
-          const isSelected = selectedTechId === tech.id;
+    <div className="fade-in animate-in space-y-12 duration-500">
+      {(Object.entries(statsByCategory) as [StackCategory, StackStat[]][]).map(
+        ([category, items]) => (
+          <section key={category} className="space-y-4">
+            <h3 className="font-semibold text-lg tracking-tight">{category}</h3>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              {items.map((tech) => {
+                const Icon = tech.icon;
+                const isSelected = selectedTechId === tech.id;
 
-          return (
-            <motion.div
-              key={tech.id}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedTechId(isSelected ? null : tech.id)}
-              className={`flex cursor-pointer flex-col items-center gap-3 rounded-xl border p-4 transition-colors ${
-                isSelected
-                  ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                  : 'border-border bg-card hover:border-primary/50'
-              }
-              `}
-            >
-              <div
-                className="rounded-full bg-muted/50 p-3 text-3xl"
-                style={{ color: isSelected ? tech.color : 'currentColor' }}
-              >
-                <Icon />
-              </div>
-              <div className="text-center">
-                <div className="font-medium text-sm">{tech.label}</div>
-                {tech.count > 0 && (
-                  <div className="mt-1 text-muted-foreground text-xs">
-                    {tech.count} project{tech.count !== 1 ? 's' : ''}
-                  </div>
-                )}
-              </div>
-
-              {tech.count > 0 && (
-                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                return (
                   <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${tech.percentage}%` }}
-                    transition={{ duration: 1, delay: 0.2 }}
-                    className="h-full rounded-full"
-                    style={{ backgroundColor: tech.color }}
-                  />
-                </div>
-              )}
-            </motion.div>
-          );
-        })}
-      </div>
+                    key={tech.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setSelectedTechId(isSelected ? null : tech.id)}
+                    className={`flex cursor-pointer flex-col items-center gap-3 rounded-xl border p-4 transition-colors ${
+                      isSelected
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border bg-card hover:border-primary/50'
+                    }`}
+                  >
+                    <div className="rounded-full bg-muted/50 p-3 text-2xl">
+                      <Icon />
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium text-sm">{tech.label}</div>
+                      {tech.count > 0 && (
+                        <div className="mt-1 text-muted-foreground text-xs">
+                          {tech.count} project{tech.count !== 1 ? 's' : ''}
+                        </div>
+                      )}
+                    </div>
+
+                    {tech.count > 0 && (
+                      <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-muted">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${tech.percentage}%` }}
+                          transition={{ duration: 1, delay: 0.2 }}
+                          className="h-full bg-primary rounded-full"
+                        />
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
+          </section>
+        )
+      )}
 
       <AnimatePresence>
         {selectedTechId && (
