@@ -22,7 +22,7 @@ All React and Astro components MUST be strictly categorized:
 #### Scenario: Forbidden Global Components
 - **WHEN** a developer creates a feature-specific component (e.g., `SEO.astro`)
 - **THEN** it MUST NOT exist in `src/components/` root.
-- **AND** if it is used globally, it SHOULD be in `src/modules/core/` or `src/components/shared/`.
+- **AND** if it is used globally, it SHOULD be in `src/modules/infra/` or `src/components/shared/`.
 
 ### Requirement: Domain Logic Encapsulation
 Business logic specific to a domain MUST reside within that module's directory.
@@ -36,9 +36,13 @@ Business logic specific to a domain MUST reside within that module's directory.
 The system SHALL support the following initial modules:
 - `blog`: Article management and display.
 - `portfolio`: Project showcase.
-- `core`: Shared layouts, meta, and navigation.
+- `infra`: Shared layouts, meta, and navigation.
 
 #### Scenario: Blog Module Existence
 - **WHEN** the project is initialized
 - **THEN** `src/modules/blog/` exists
+
+#### Scenario: Infra Module Existence
+- **WHEN** the project is initialized
+- **THEN** `src/modules/infra/` exists
 

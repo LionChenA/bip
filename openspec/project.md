@@ -25,7 +25,7 @@ The site serves as a professional identity hub for a developer/engineer.
 ## Modular Architecture
 
 ### Core Module Charter
-The `core` module (`src/modules/core`) encapsulates shared technical foundations.
+The `core` module (`src/modules/infra`) encapsulates shared technical foundations.
 - **Responsibility**: Layouts, SEO, Design System primitives (UI kit), and global styles.
 - **Non-Goal**: Domain-specific logic or content.
 - **Exports**: Only generic components and utilities used by multiple domains.
