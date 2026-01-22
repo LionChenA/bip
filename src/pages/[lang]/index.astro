@@ -1,14 +1,19 @@
 ---
-import { Hero } from '../../modules/infra/components/Hero';
-import BaseLayout from '../../modules/infra/layouts/BaseLayout.astro';
+import { LandingHero } from '../../modules/home/components/LandingHero';
+import LandingLayout from '../../modules/home/layouts/LandingLayout.astro';
 
 export function getStaticPaths() {
   return [{ params: { lang: 'en' } }, { params: { lang: 'zh' } }];
 }
 
 const { lang } = Astro.params;
+
+const slogans = {
+  en: 'INTELLECTUAL INFRASTRUCTURE',
+  zh: '智力基础设施',
+};
 ---
 
-<BaseLayout title="Home" lang={lang}>
-  <Hero client:load lang={lang} />
-</BaseLayout>
+<LandingLayout title="BIP / Home" lang={lang}>
+  <LandingHero client:load slogan={slogans[lang as keyof typeof slogans]} />
+</LandingLayout>
