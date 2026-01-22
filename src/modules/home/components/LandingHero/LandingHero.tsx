@@ -1,37 +1,50 @@
 import type React from 'react';
-import { CoordinateNav } from './CoordinateNav';
+import { useEffect, useState } from 'react';
+import { siteConfig } from '@/modules/infra/data/siteConfig';
 import { FluxSlogan } from './FluxSlogan';
 import { TrailGrid } from './TrailGrid';
+import { CoordinateNav } from './CoordinateNav';
 
-export const LandingHero: React.FC<{ slogan?: string }> = ({
-  slogan = 'INTELLECTUAL INFRASTRUCTURE',
-}) => {
+export const LandingHero: React.FC = () => {
+  const [lang, setLang] = useState<'en' | 'zh'>('zh');
+
+  useEffect(() => {
+    const detectedLang = navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+    setLang(detectedLang);
+  }, []);
+
+  const currentSlogan = lang === 'zh' ? siteConfig.slogan.zh : siteConfig.slogan.en;
+  const currentTitle = lang === 'zh' ? siteConfig.title.zh : siteConfig.title.en;
+
   return (
-    <section className="relative min-h-screen w-full flex flex-col justify-center overflow-hidden bg-background">
+    <section className="relative flex min-h-screen w-full flex-col justify-center overflow-hidden bg-background">
       <TrailGrid />
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container relative z-10 mx-auto px-6">
         <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-12 mb-12">
-            <FluxSlogan text={slogan} />
+          <div className="col-span-12 mb-12 flex flex-col items-center text-center">
+            <div className="mb-4 font-mono text-[10px] text-primary uppercase tracking-[0.3em]">
+              {currentTitle}
+            </div>
+            <FluxSlogan text={currentSlogan} />
           </div>
 
-          <div className="col-span-12 md:col-start-2 md:col-span-10 flex flex-col md:flex-row justify-between items-end gap-12">
+          <div className="col-span-12 flex flex-col items-center justify-between gap-12 md:col-span-10 md:col-start-2 md:flex-row">
             <CoordinateNav />
 
-            <div className="max-w-xs text-right">
-              <p className="font-sans text-xs text-muted-foreground leading-relaxed uppercase tracking-[0.2em]">
-                A laboratory for systems thinking, digital gardening, and the pursuit of formal
-                elegance in code.
+            <div className="max-w-xs text-right hidden md:block">
+              <p className="font-sans text-muted-foreground text-[10px] uppercase leading-relaxed tracking-[0.2em]">
+                {lang === 'zh' ? siteConfig.bio.zh : siteConfig.bio.en}
               </p>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Aesthetic Metadata */}
       <div className="absolute bottom-12 left-6 z-10 hidden md:block">
-        <div className="font-mono text-[10px] text-muted-foreground rotate-90 origin-left tracking-[0.3em] uppercase">
-          Swiss Flux / v0.1.0
+        <div className="origin-left rotate-90 font-mono text-[10px] text-muted-foreground uppercase tracking-[0.3em]">
+          Swiss Flux / {lang.toUpperCase()}
         </div>
       </div>
     </section>

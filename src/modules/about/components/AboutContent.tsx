@@ -3,6 +3,11 @@ import { Download, Github, Mail } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import { resume } from '@/modules/about/data/resume';
 import { siteConfig } from '@/modules/infra/data/siteConfig';
+import { t } from '@/lib/i18n';
+
+interface AboutContentProps {
+  lang: 'en' | 'zh';
+}
 
 const container = {
   hidden: { opacity: 0 },
@@ -19,7 +24,7 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-export function AboutContent() {
+export function AboutContent({ lang }: AboutContentProps) {
   return (
     <motion.div
       variants={container}
@@ -27,37 +32,41 @@ export function AboutContent() {
       animate="show"
       className="grid grid-cols-1 gap-12 md:grid-cols-[280px_1fr]"
     >
-      <Sidebar />
-      <MainContent />
+      <Sidebar lang={lang} />
+      <MainContent lang={lang} />
     </motion.div>
   );
 }
 
-function Sidebar() {
+function Sidebar({ lang }: { lang: 'en' | 'zh' }) {
   return (
     <motion.aside variants={item} className="space-y-8">
       <div className="space-y-4">
         <div className="space-y-1">
           <h1 className="font-bold text-3xl tracking-tight">{siteConfig.name}</h1>
-          <p className="text-muted-foreground text-lg">{siteConfig.title}</p>
+          <p className="text-lg text-muted-foreground">{t(siteConfig.title, lang)}</p>
+          <div className="flex items-center gap-2 text-muted-foreground text-xs">
+            <span className="inline-block h-2 w-2 rounded-full bg-green-500/80" />
+            {t('about.location', lang)}
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">
           <a
-            href={siteConfig.socials.github}
+            href={siteConfig.socials[0].url}
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-3 text-muted-foreground transition-colors hover:text-foreground"
           >
             <Github size={20} />
-            <span>GitHub</span>
+            <span>{t('contact.github', lang)}</span>
           </a>
           <a
-            href={siteConfig.socials.email}
+            href={siteConfig.socials[1].url}
             className="flex items-center gap-3 text-muted-foreground transition-colors hover:text-foreground"
           >
             <Mail size={20} />
-            <span>Email</span>
+            <span>{t('contact.email', lang)}</span>
           </a>
         </div>
       </div>
@@ -69,42 +78,42 @@ function Sidebar() {
         rel="noopener"
       >
         <Download size={18} />
-        Download CV
+        {t('about.download', lang)}
       </a>
     </motion.aside>
   );
 }
 
-function MainContent() {
+function MainContent({ lang }: { lang: 'en' | 'zh' }) {
   return (
     <motion.div variants={item} className="space-y-12">
       <section className="space-y-4">
-        <h2 className="font-bold text-2xl tracking-tight">Bio</h2>
+        <h2 className="font-bold text-2xl tracking-tight">{t('about.bio', lang)}</h2>
         <div className="prose dark:prose-invert max-w-none text-lg text-muted-foreground leading-relaxed">
-          <p>{resume.bio}</p>
+          <p>{t(resume.bio, lang)}</p>
         </div>
       </section>
 
       <section className="space-y-4">
-        <h2 className="font-bold text-2xl tracking-tight">Philosophy</h2>
+        <h2 className="font-bold text-2xl tracking-tight">{t('about.philosophy', lang)}</h2>
         <div className="prose dark:prose-invert max-w-none text-lg text-muted-foreground leading-relaxed">
-          <p>{resume.philosophy}</p>
+          <p>{t(resume.philosophy, lang)}</p>
         </div>
       </section>
 
       <section className="space-y-6">
-        <h2 className="font-bold text-2xl tracking-tight">The Journey</h2>
+        <h2 className="font-bold text-2xl tracking-tight">{t('about.journey', lang)}</h2>
         <div className="space-y-8">
           {resume.journey.map((phase) => (
-            <div key={phase.title} className="space-y-2">
+            <div key={t(phase.title, lang)} className="space-y-2">
               <div className="flex items-center gap-4">
-                <span className="font-mono text-primary text-sm tracking-wider uppercase">
+                <span className="font-mono text-primary text-sm uppercase tracking-wider">
                   {phase.period}
                 </span>
                 <div className="h-px flex-1 bg-border" />
               </div>
-              <h3 className="font-bold text-xl">{phase.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{phase.description}</p>
+              <h3 className="font-bold text-xl">{t(phase.title, lang)}</h3>
+              <p className="text-muted-foreground leading-relaxed">{t(phase.description, lang)}</p>
             </div>
           ))}
         </div>

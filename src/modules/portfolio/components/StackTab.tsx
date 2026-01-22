@@ -106,7 +106,7 @@ export function StackTab({ projects }: StackTabProps) {
                           initial={{ width: 0 }}
                           animate={{ width: `${tech.percentage}%` }}
                           transition={{ duration: 1, delay: 0.2 }}
-                          className="h-full bg-primary rounded-full"
+                          className="h-full rounded-full bg-primary"
                         />
                       </div>
                     )}

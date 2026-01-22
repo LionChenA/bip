@@ -1,8 +1,8 @@
 import { animate, stagger } from 'animejs';
 import type React from 'react';
 import { useEffect, useRef } from 'react';
-
 import { siteConfig } from '../data/siteConfig';
+import { t } from '@/lib/i18n';
 
 interface HeroProps {
   title?: string;
@@ -12,22 +12,19 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ title, subtitle, lang = 'en' }) => {
   const displayTitle = title || `HELLO, I'M ${siteConfig.name.toUpperCase()}`;
-  const displaySubtitle = subtitle || (lang === 'zh' ? '终身学习者' : siteConfig.title);
+  const displaySubtitle = subtitle || t(siteConfig.title, lang);
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!gridRef.current) return;
 
-    // Grid configuration
     const gridEl = gridRef.current;
     const columns = Math.floor(window.innerWidth / 50);
     const rows = Math.floor(window.innerHeight / 50);
     const total = columns * rows;
 
-    // Clear existing grid
     gridEl.innerHTML = '';
 
-    // Create grid items
     for (let i = 0; i < total; i++) {
       const item = document.createElement('div');
       item.classList.add('grid-item');
@@ -42,11 +39,9 @@ export const Hero: React.FC<HeroProps> = ({ title, subtitle, lang = 'en' }) => {
       gridEl.appendChild(item);
     }
 
-    // Set grid layout styles
     gridEl.style.setProperty('--columns', columns.toString());
     gridEl.style.setProperty('--rows', rows.toString());
 
-    // Stagger animation on load
     animate('.grid-item', {
       scale: [
         { to: 0.1, ease: 'outSine', duration: 500 },
@@ -56,14 +51,11 @@ export const Hero: React.FC<HeroProps> = ({ title, subtitle, lang = 'en' }) => {
       loop: false,
     });
 
-    // Interaction handler
     const handleMouseMove = (e: MouseEvent) => {
-      // Calculate relative position
       const rect = gridEl.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      // Find index approximately (simplified for performance)
       const col = Math.floor(x / 50);
       const row = Math.floor(y / 50);
       const index = row * columns + col;
@@ -89,7 +81,6 @@ export const Hero: React.FC<HeroProps> = ({ title, subtitle, lang = 'en' }) => {
       }
     };
 
-    // Throttled mouse move for performance
     let ticking = false;
     const onMove = (e: MouseEvent) => {
       if (!ticking) {
@@ -102,15 +93,11 @@ export const Hero: React.FC<HeroProps> = ({ title, subtitle, lang = 'en' }) => {
     };
 
     window.addEventListener('mousemove', onMove);
-
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-    };
+    return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
   return (
     <div className="relative flex h-[80vh] w-full items-center justify-center overflow-hidden">
-      {/* Background Grid */}
       <div
         ref={gridRef}
         className="pointer-events-none absolute inset-0 z-0 grid gap-1"
@@ -120,7 +107,6 @@ export const Hero: React.FC<HeroProps> = ({ title, subtitle, lang = 'en' }) => {
         }}
       ></div>
 
-      {/* Foreground Content */}
       <div className="pointer-events-none relative z-10 select-none text-center text-primary-foreground mix-blend-difference">
         <h1 className="fade-in slide-in-from-bottom-10 mb-4 animate-in font-bold text-6xl tracking-tighter duration-1000 md:text-9xl">
           {displayTitle}

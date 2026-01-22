@@ -92,7 +92,7 @@ export const TrailGrid: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
+      className="pointer-events-none fixed inset-0 z-0"
       style={{ opacity: 0.8 }}
     />
   );

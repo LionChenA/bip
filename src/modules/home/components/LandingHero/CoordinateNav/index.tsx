@@ -1,39 +1,45 @@
 import { LayoutGroup, motion } from 'framer-motion';
 import type React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { path } from '@/lib/routing';
 
-const navItems = [
-  { id: '01', label: 'LIBRARY', href: '/garden' },
-  { id: '02', label: 'EXPERIMENTS', href: '/experiments' },
-  { id: '03', label: 'SYSTEM', href: '/specs' },
-  { id: '04', label: 'ABOUT', href: '/about' },
+const NAV_ITEMS = [
+  { id: '01', label: { en: 'GARDEN', zh: '数字花园' }, baseHref: '/garden' },
+  { id: '02', label: { en: 'WORK', zh: '作品项目' }, baseHref: '/work' },
+  { id: '03', label: { en: 'ABOUT', zh: '关于自我' }, baseHref: '/about' },
 ];
 
 export const CoordinateNav: React.FC = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [lang, setLang] = useState<'en' | 'zh'>('zh');
+
+  useEffect(() => {
+    const detectedLang = navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+    setLang(detectedLang);
+  }, []);
 
   return (
-    <nav className="flex flex-col md:flex-row gap-8 md:gap-16 items-start md:items-center">
+    <nav className="flex flex-col items-start gap-8 md:flex-row md:items-center md:gap-16">
       <LayoutGroup>
-        {navItems.map((item, index) => (
+        {NAV_ITEMS.map((item, index) => (
           <a
             key={item.id}
-            href={item.href}
+            href={path(`/${lang}${item.baseHref}`)}
             className="group relative flex flex-col no-underline"
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            <span className="font-mono text-[10px] text-muted-foreground mb-1 tracking-widest">
+            <span className="mb-1 font-mono text-[10px] text-muted-foreground tracking-widest">
               [{item.id}]
             </span>
-            <span className="font-sans text-sm font-medium tracking-widest group-hover:text-foreground transition-colors">
-              / {item.label}
+            <span className="font-medium font-sans text-sm tracking-widest transition-colors group-hover:text-foreground">
+              / {lang === 'zh' ? item.label.zh : item.label.en}
             </span>
 
             {hoveredIndex === index && (
               <motion.div
                 layoutId="nav-underline"
-                className="absolute -bottom-2 left-0 right-0 h-[1px] bg-foreground"
+                className="absolute right-0 -bottom-2 left-0 h-[1px] bg-foreground"
                 transition={{
                   type: 'spring',
                   stiffness: 380,

@@ -1,36 +1,8 @@
 ---
-import { path } from '@/lib/routing';
-
-// Context:
-// Since GitHub Pages serves static files (SSG), we cannot perform server-side redirects based on request headers.
-// This page acts as a client-side router entry point to redirect users based on their browser language.
+import { LandingHero } from '@/modules/home/components/LandingHero';
+import LandingLayout from '@/modules/home/layouts/LandingLayout.astro';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Redirecting...</title>
-    
-    <script is:inline define:vars={{ basePath: path('') }}>
-      (function () {
-        try {
-          var lang = navigator.language || navigator.userLanguage || 'en';
-          var target = lang.toLowerCase().startsWith('zh') ? '/zh' : '/en';
-
-          window.location.replace(basePath + target);
-        } catch (e) {
-          window.location.replace(basePath + '/en');
-        }
-      })();
-    </script>
-    
-    <noscript>
-      <meta http-equiv="refresh" content={`0;url=${path('/en')}`} />
-    </noscript>
-  </head>
-  <body>
-    <p>Redirecting to <a href={path('/en')}>/en</a>...</p>
-  </body>
-</html>
+<LandingLayout title="Lion Chen | Intellectual Infrastructure">
+  <LandingHero />
+</LandingLayout>
