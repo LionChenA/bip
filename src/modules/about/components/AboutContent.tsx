@@ -72,10 +72,10 @@ function Sidebar({ lang }: { lang: 'en' | 'zh' }) {
       </div>
 
       <a
-        href="/resume.pdf"
-        target="_blank"
-        className={buttonVariants({ variant: 'outline', className: 'w-full gap-2' })}
-        rel="noopener"
+        href="#"
+        className={buttonVariants({ variant: 'outline', className: 'w-full gap-2 cursor-not-allowed opacity-50' })}
+        aria-disabled="true"
+        onClick={(e) => e.preventDefault()}
       >
         <Download size={18} />
         {t('about.download', lang)}
