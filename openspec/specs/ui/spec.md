@@ -80,3 +80,28 @@ The system code style MUST prioritize readability for Tailwind CSS classes.
 - **WHEN** writing Tailwind classes in `cva` or `cn` functions
 - **THEN** the classes MUST be sorted according to the official Tailwind ordering (enforced by Biome)
 
+### Requirement: Landing Page Exploration
+The system SHALL support multiple visual variants for the homepage to facilitate A/B testing.
+
+#### Scenario: Variant Switching
+- **WHEN** a user visits the root path `/`
+- **THEN** they see a "Variant Switcher" control
+- **AND** they can toggle between "Swiss", "Terminal", "Lattice", "Flux", and "Focus" layouts
+- **AND** the choice persists across reloads.
+
+### Requirement: Motion Primitives
+The landing page variants MUST leverage `framer-motion` and `react-bits` components to deliver high-quality, performant animations.
+
+#### Scenario: Text Animation
+- **WHEN** the "Swiss" variant loads
+- **THEN** the slogan MUST animate in using a blur or split-text effect.
+
+### Requirement: Typography System
+The system MUST use a high-quality, self-hosted font stack for English and Code, while relying on system fonts for Chinese to ensure optimal performance.
+
+#### Scenario: Font Selection
+- **WHEN** rendering UI or Body text
+- **THEN** use `Geist Sans` -> System Sans (PingFang SC).
+- **WHEN** rendering Code or Data
+- **THEN** use `Maple Mono` -> System Mono.
+

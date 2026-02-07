@@ -12,10 +12,6 @@ The system MUST use Astro Content Collections to manage `garden` and `portfolio`
 - **AND** it MUST support fields: `title`, `description`, `pubDate`, `updatedDate`, `tags`
 - **AND** it MUST support `type`: `evergreen` | `literature` | `article`.
 
-#### Scenario: Portfolio Schema
-- **WHEN** a portfolio item is added
-- **THEN** it supports fields for `stack` (technologies used) and `projectUrl`
-
 ### Requirement: Portfolio Schema
 The portfolio content schema MUST support academic achievements as first-class citizens.
 

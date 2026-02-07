@@ -20,11 +20,3 @@ All React and Astro components MUST be strictly categorized:
 - **THEN** it MUST NOT exist in `src/components/` root.
 - **AND** if it is used globally, it SHOULD be in `src/modules/core/` or `src/components/shared/`.
 
-## ADDED Requirements
-### Requirement: Domain Logic Encapsulation
-Business logic specific to a domain MUST reside within that module's directory.
-
-#### Scenario: Backlinks Logic
-- **WHEN** logic exists for parsing backlinks (specific to Garden)
-- **THEN** it MUST be located in `src/modules/garden/lib/` or `src/modules/garden/utils/`
-- **AND** it MUST NOT be placed in the global `src/lib/` (which is reserved for generic utilities).

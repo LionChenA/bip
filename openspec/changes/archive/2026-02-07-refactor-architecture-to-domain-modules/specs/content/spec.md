@@ -8,7 +8,3 @@ The system MUST use Astro Content Collections to manage `garden` and `portfolio`
 - **AND** it MUST support fields: `title`, `description`, `pubDate`, `updatedDate`, `tags`
 - **AND** it MUST support `type`: `evergreen` | `literature` | `article`.
 
-## REMOVED Requirements
-### Requirement: Blog Schema Validation
-**Reason**: Replaced by Garden Schema to unify domain terminology.
-**Migration**: Rename `src/content/blog` to `src/content/garden`.

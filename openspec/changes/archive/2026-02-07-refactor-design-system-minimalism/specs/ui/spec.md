@@ -1,4 +1,4 @@
-## MODIFIED Requirements
+## ADDED Requirements
 ### Requirement: Typography System
 The system MUST use a high-quality, self-hosted font stack for English and Code, while relying on system fonts for Chinese to ensure optimal performance.
 
