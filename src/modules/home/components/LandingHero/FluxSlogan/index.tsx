@@ -30,9 +30,10 @@ const Character: React.FC<{ char: string; index: number }> = ({ char, index }) =
 export const FluxSlogan: React.FC<FluxSloganProps> = ({ text }) => {
   return (
     <h1 className="flex flex-wrap justify-center font-bold font-sans text-4xl leading-none tracking-tight md:text-6xl lg:text-7xl">
-      {text.split('').map((char, i) => (
-        <Character key={`${text}-${i}`} char={char} index={i} />
-      ))}
+      {text.split('').map((char, i) => {
+        const charKey = `char-${text}-${i}`;
+        return <Character key={charKey} char={char} index={i} />;
+      })}
     </h1>
   );
 };

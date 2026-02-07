@@ -1,9 +1,9 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { siteConfig } from '@/modules/infra/data/siteConfig';
+import { CoordinateNav } from './CoordinateNav';
 import { FluxSlogan } from './FluxSlogan';
 import { TrailGrid } from './TrailGrid';
-import { CoordinateNav } from './CoordinateNav';
 
 export const LandingHero: React.FC = () => {
   const [lang, setLang] = useState<'en' | 'zh'>('zh');
@@ -32,8 +32,8 @@ export const LandingHero: React.FC = () => {
           <div className="col-span-12 flex flex-col items-center justify-between gap-12 md:col-span-10 md:col-start-2 md:flex-row">
             <CoordinateNav />
 
-            <div className="max-w-xs text-right hidden md:block">
-              <p className="font-sans text-muted-foreground text-[10px] uppercase leading-relaxed tracking-[0.2em]">
+            <div className="hidden max-w-xs text-right md:block">
+              <p className="font-sans text-[10px] text-muted-foreground uppercase leading-relaxed tracking-[0.2em]">
                 {lang === 'zh' ? siteConfig.bio.zh : siteConfig.bio.en}
               </p>
             </div>
