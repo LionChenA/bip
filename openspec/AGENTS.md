@@ -12,7 +12,29 @@ Instructions for AI coding assistants using OpenSpec for spec-driven development
 - Validate: `openspec validate [change-id] --strict` and fix issues
 - Request approval: Do not start implementation until proposal is approved
 
-## Three-Stage Workflow
+
+## New Features & Slash Commands
+
+OpenSpec now supports a **fluid workflow** powered by AI slash commands.
+
+### `/opsx:ff` (Fast-Forward)
+Rapidly scaffolds a complete Change Proposal (Proposal, Tasks, Design, Specs) in one shot.
+*   **Use when**: You have a clear idea and want to skip manual file creation steps.
+*   **Example**: "Run /opsx:ff to add a new 'Snippets' module."
+
+### `/opsx:verify`
+Verifies that the implemented code matches the Spec requirements.
+*   **Use when**: You finish a task and want to ensure compliance before PR.
+*   **Example**: "I'm done with the API. /opsx:verify."
+
+### `/opsx:sync`
+Previews how Delta Specs will merge into the Source of Truth.
+*   **Use when**: You want to check if your MODIFIED requirements align with the current spec.
+
+---
+
+## Three-Stage Workflow (Legacy Reference)
+
 
 ### Stage 1: Creating Changes
 Create proposal when you need to:
@@ -373,9 +395,20 @@ notifications/spec.md
 ...
 ```
 
-## Best Practices
 
-### Simplicity First
+## Best Practices (Modern)
+
+### Fluid Actions
+Move between artifacts as needed. Updating a Spec might require updating the Design. This is expected.
+
+### Single Source of Truth
+The `openspec/specs/` directory is the **only** truth.
+*   Proposed changes live in `openspec/changes/`.
+*   They only become truth after `openspec archive`.
+
+### Dependencies as Enablers
+Use `tasks.md` and `design.md` to guide your work, not to block it. If a task is blocked, update the plan.
+
 - Default to <100 lines of new code
 - Single-file implementations until proven insufficient
 - Avoid frameworks without clear justification
