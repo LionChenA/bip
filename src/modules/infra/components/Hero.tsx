@@ -1,8 +1,8 @@
 import { animate, stagger } from 'animejs';
 import type React from 'react';
 import { useEffect, useRef } from 'react';
-import { siteConfig } from '../data/siteConfig';
 import { t } from '@/lib/i18n';
+import { siteConfig } from '../data/siteConfig';
 
 interface HeroProps {
   title?: string;
