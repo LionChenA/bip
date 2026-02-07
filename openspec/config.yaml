@@ -3,18 +3,44 @@ schema: spec-driven
 # Project context (optional)
 # This is shown to AI when creating artifacts.
 # Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Project: Personal Website & Digital Garden ("bip")
+  
+  Stack:
+    - Framework: Astro v5 (React integration, MDX support)
+    - Language: TypeScript (Strict mode, configured via tsconfig.json)
+    - Styling: Tailwind CSS v4
+      - Utilities: clsx, tailwind-merge, class-variance-authority (cva)
+      - Animations: Framer Motion, Anime.js, local CSS animations
+    - Linting & Formatting: Biome
+      - Rules: strict unused imports/vars, sorted classes (cva, cn)
+      - Style: 2 spaces indent, single quotes, 100 char line width, no trailing commas in JSON
+    - Icons: Lucide React, React Icons
+    - Package Manager: PNPM
+
+  Architecture:
+    - Modular Structure: src/modules/{feature} (e.g., garden, portfolio, home)
+    - Content: MDX-based content with Remark/Rehype plugins (math, TOC, slugs)
+    - Data: Static generation with some build-time scripts (e.g., backlinks generation)
+    - Aliases: "@/*" maps to "./src/*"
+
+  Conventions:
+    - Code Style: Follow Biome configuration automatically.
+    - Components: Functional React components, named exports preferred.
+    - Styling: Use "cn()" utility for class merging. Use "cva" for component variants.
+    - Digital Garden: Notes are interconnected. Run "pnpm gen:garden" to update backlinks.
+    - Scripts: TypeScript scripts run via "tsx" (e.g., src/modules/garden/scripts/generate-backlinks.ts).
+
+  Workflow:
+    - OpenSpec: Use OpenSpec workflow for changes (new-change -> specs -> apply -> verify).
+    - Commits: Use conventional commits.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  proposal:
+    - Keep proposals concise and focused on the "why".
+    - Identify specific module impacts.
+  tasks:
+    - Break tasks into atomic units (e.g., one component or function per task).
+    - Verify changes with "pnpm check" (Biome + Astro check).
