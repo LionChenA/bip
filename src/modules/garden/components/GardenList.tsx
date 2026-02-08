@@ -65,18 +65,27 @@ export function GardenList({
     }
   }, [filter, items]);
 
+  const fetchContent = async (slug: string) => {
+    if (contentCache[slug]) return;
+
+    try {
+      const res = await fetch(path(`/garden/${slug}.json`));
+      if (!res.ok) {
+        throw new Error(`Failed to fetch content: ${res.status} ${res.statusText}`);
+      }
+      const data = await res.json();
+      setContentCache((prev) => ({
+        ...prev,
+        [slug]: { content: data.content, backlinks: data.backlinks },
+      }));
+    } catch (e) {
+      console.error(`[GardenList] Failed to load content for ${slug}:`, e);
+    }
+  };
+
   // Preload Content on Hover
   const handleHover = async (slug: string) => {
-    if (!contentCache[slug]) {
-      try {
-        const res = await fetch(path(`/garden/${slug}.json`));
-        const data = await res.json();
-        setContentCache((prev) => ({
-          ...prev,
-          [slug]: { content: data.content, backlinks: data.backlinks },
-        }));
-      } catch (_e) {}
-    }
+    await fetchContent(slug);
   };
 
   const handleExpand = async (slug: string) => {
@@ -88,18 +97,7 @@ export function GardenList({
     setExpandedSlug(slug);
     window.history.pushState({ slug }, '', path(`/${lang}/garden/${slug}`));
 
-    if (!contentCache[slug]) {
-      try {
-        const res = await fetch(path(`/garden/${slug}.json`));
-        const data = await res.json();
-        setContentCache((prev) => ({
-          ...prev,
-          [slug]: { content: data.content, backlinks: data.backlinks },
-        }));
-      } catch (e) {
-        console.error('Failed to load content', e);
-      }
-    }
+    await fetchContent(slug);
   };
 
   // The Elevator Effect Logic: Scroll back if deep in content
