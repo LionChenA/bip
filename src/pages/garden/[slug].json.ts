@@ -1,8 +1,8 @@
-import { getCollection } from 'astro:content';
+import { type CollectionEntry, getCollection } from 'astro:content';
 import { experimental_AstroContainer } from 'astro/container';
 import backlinks from '../../modules/garden/data/backlinks.json';
 
-export async function GET({ props }: { props: { entry: any } }) {
+export async function GET({ props }: { props: { entry: CollectionEntry<'garden'> } }) {
   const { entry } = props;
   const { Content } = await entry.render();
 
