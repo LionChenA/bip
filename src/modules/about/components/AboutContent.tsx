@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { Download, Github, Mail } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
+import { t } from '@/lib/i18n';
 import { resume } from '@/modules/about/data/resume';
 import { siteConfig } from '@/modules/infra/data/siteConfig';
-import { t } from '@/lib/i18n';
 
 interface AboutContentProps {
   lang: 'en' | 'zh';
@@ -73,7 +73,10 @@ function Sidebar({ lang }: { lang: 'en' | 'zh' }) {
 
       <a
         href="#"
-        className={buttonVariants({ variant: 'outline', className: 'w-full gap-2 cursor-not-allowed opacity-50' })}
+        className={buttonVariants({
+          variant: 'outline',
+          className: 'w-full gap-2 cursor-not-allowed opacity-50',
+        })}
         aria-disabled="true"
         onClick={(e) => e.preventDefault()}
       >
