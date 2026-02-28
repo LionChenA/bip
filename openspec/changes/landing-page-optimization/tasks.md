@@ -1,15 +1,15 @@
 ## 1. Setup
 
-- [ ] 1.1 Install d3-force and types: `pnpm add d3-force @types/d3-force`
-- [ ] 1.2 Verify installation with `pnpm check`
+- [x] 1.1 Install d3-force and types: `pnpm add d3-force @types/d3-force`
+- [x] 1.2 Verify installation with `pnpm check`
 
 ## 2. TextType Component Integration
 
-- [ ] 2.1 Copy TextType component from react-bits to `src/components/TextType/`
-- [ ] 2.2 Add TextType CSS to `src/components/TextType/TextType.css`
-- [ ] 2.3 Update `src/modules/home/components/LandingHero/FluxSlogan/index.tsx` to use TextType
-- [ ] 2.4 Configure TextType: `initialDelay: 0`, `typingSpeed: 75`, `showCursor: true`, `cursorCharacter: "_"`
-- [ ] 2.5 Handle language switching (zh/en) with TextType `text` prop
+- [x] 2.1 Copy TextType component from react-bits to `src/components/TextType/`
+- [x] 2.2 Add TextType CSS to `src/components/TextType/TextType.css`
+- [x] 2.3 Update `src/modules/home/components/LandingHero/FluxSlogan/index.tsx` to use TextType
+- [x] 2.4 Configure TextType: `initialDelay: 0`, `typingSpeed: 75`, `showCursor: true`, `cursorCharacter: "_"`
+- [x] 2.5 Handle language switching (zh/en) with TextType `text` prop
 
 ## 3. ConstellationBackground Implementation
 
