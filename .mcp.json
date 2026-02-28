@@ -1,21 +1,15 @@
 {
-    "mcpServers": {
-        "shadcn": {
-            "command": "npx",
-            "args": [
-                "shadcn@latest",
-                "mcp"
-            ]
-        },
-        "context7": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "context7@latest"
-            ],
-            "env": {
-                "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
-            }
-        }
+  "mcpServers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "context7@latest"],
+      "env": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      }
     }
+  }
 }

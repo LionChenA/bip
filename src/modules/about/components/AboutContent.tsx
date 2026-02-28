@@ -71,18 +71,18 @@ function Sidebar({ lang }: { lang: 'en' | 'zh' }) {
         </div>
       </div>
 
-      <a
-        href="#"
+      <button
+        type="button"
         className={buttonVariants({
           variant: 'outline',
-          className: 'w-full gap-2 cursor-not-allowed opacity-50',
+          className: 'w-full cursor-not-allowed gap-2 opacity-50',
         })}
         aria-disabled="true"
-        onClick={(e) => e.preventDefault()}
+        disabled
       >
         <Download size={18} />
         {t('about.download', lang)}
-      </a>
+      </button>
     </motion.aside>
   );
 }
