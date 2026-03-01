@@ -25,7 +25,8 @@ export class EvolutionUpdater implements IParticleUpdater {
 
   init(particle: EvolutionParticle): void {
     // Increase probability slightly for observability, and guarantee at least one occasionally
-    const isBlackSwan = Math.random() < 0.001; // Extremely rare on initial load
+    // Black swans can ONLY be born during the respawn phase when the system is stagnant. Never on initial load.
+    const isBlackSwan = false;
 
     particle.evolutionConfig = {
       deathTimer: 300 + Math.random() * 300, // 5-10 seconds at 60fps
@@ -94,6 +95,13 @@ export class EvolutionUpdater implements IParticleUpdater {
     if (config.isBlackSwan) {
       // Black swans burn out quickly if they don't hit anything
       config.deathTimer -= 1 * delta.factor;
+      
+      // DECELERATION (Friction)
+      // The black swan enters like a meteor but loses momentum over time as it fights the entropy
+      // Soft friction so it slows down over its 10 second lifespan but does not stop instantly
+      particle.velocity.x *= 0.995;
+      particle.velocity.y *= 0.995;
+      
       if (config.deathTimer <= 0) {
         config.isBlackSwan = false;
         config.hasHit = true; // Trigger death cycle
