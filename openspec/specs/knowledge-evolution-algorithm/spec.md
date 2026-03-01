@@ -30,17 +30,18 @@ Particles that form links SHALL have their death timer frozen/reset, and SHALL g
 - **AND** its `size` and `opacity` gradually lerp towards their maximum bounds
 - **AND** its velocity linearly dampens (up to 70%) to simulate the stagnation of a large network
 
-### Requirement: The Rare Black Swan (Paradigm Shift)
-The system SHALL dynamically spawn a rare "Black Swan" to destroy overly stagnant clusters, based on the macro-state of the network.
+### Requirement: The Rare, Guided Black Swan (Paradigm Shift)
+The system SHALL dynamically spawn a rare "Black Swan" to destroy overly stagnant clusters. It must be unique (only one at a time) and actively hunt the largest center of stagnation.
 
-#### Scenario: High Stagnation Triggers Destruction
-- **WHEN** more than 30% of the particles in the network are highly mature (stagnant)
-- **THEN** newly respawning particles have an elevated chance (5%) to become a Black Swan
+#### Scenario: High Stagnation Triggers a Unique Destruction
+- **WHEN** more than 40% of the particles in the network are highly mature (stagnant)
+- **AND** there are currently 0 Black Swans on the screen
+- **THEN** newly respawning particles have an elevated chance to become a Black Swan
 - **AND** the Black Swan is colored red (`#ef4444`) and moves at 4x speed
+- **AND** the Black Swan calculates the "center of mass" of all mature particles and actively steers its velocity towards that cluster (Guided Missile)
 
 #### Scenario: Shattering a Paradigm
-- **WHEN** a Black Swan particle collides with a mature, connected particle
-- **THEN** a massive AoE (Area of Effect) explosion is triggered
+- **WHEN** a Black Swan particle collides with a mature, connected particle (within a massive AoE radius)
+- **THEN** the Black Swan is instantly consumed (burns out)
 - **AND** all mature particles within the blast radius lose their links, flash amber (`#fbbf24`), puff up, and have their maturity instantly reset to 0
 - **AND** a massive blast of kinetic velocity combined with random noise is applied to scatter the former cluster
-- **AND** the Black Swan is consumed (burns out) in the process
