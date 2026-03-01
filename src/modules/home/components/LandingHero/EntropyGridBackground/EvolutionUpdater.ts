@@ -9,6 +9,7 @@ export type EvolutionParticle = Particle & {
     maxMaturity: number;
     isBlackSwan: boolean;
     hasHit?: boolean;
+    connectionTime: number;
     baseSize: number;
     baseOpacity: number;
     baseSpeed: number;
@@ -32,6 +33,7 @@ export class EvolutionUpdater implements IParticleUpdater {
       deathTimer: 300 + Math.random() * 300, // 5-10 seconds at 60fps
       maxDeathTimer: 600,
       maturity: 0,
+      connectionTime: 0,
       maxMaturity: 100,
       isBlackSwan,
       baseSize: typeof particle.options.size.value === 'number' ? particle.options.size.value : 2,
@@ -42,8 +44,8 @@ export class EvolutionUpdater implements IParticleUpdater {
 
     if (isBlackSwan) {
       // Black Swans are fast and distinct - making them visually red/hot
-      particle.velocity.x *= 4;
-      particle.velocity.y *= 4;
+      particle.velocity.x *= 2;
+      particle.velocity.y *= 2;
       if (particle.color) {
         (particle.color as any).value = '#ef4444'; // Tailwind red-500
       }
@@ -54,61 +56,35 @@ export class EvolutionUpdater implements IParticleUpdater {
     if (!this.isEnabled(particle) || !particle.evolutionConfig) return;
 
     const config = particle.evolutionConfig;
-    const links = (particle as any).links;
-    const hasLinks = links && links.length > 0;
+    let links = (particle as any).links;
 
-    // --- INTERMOLECULAR FORCES (SPRING PHYSICS) ---
-    // If connected, particles should attract each other to form clusters,
-    // but repel slightly if too close to avoid perfect overlapping.
-    if (hasLinks && !config.isBlackSwan) {
-      for (const link of links) {
-        const other = link.destination as EvolutionParticle;
-        if (!other || other.destroyed || !other.evolutionConfig) continue;
-
-        const dx = other.position.x - particle.position.x;
-        const dy = other.position.y - particle.position.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist > 0) {
-          // Normalization
-          const nx = dx / dist;
-          const ny = dy / dist;
-
-          // Spring mechanics:
-          // Ideal resting distance is 40px.
-          // > 60px = Attract
-          // < 60px = Repulse strongly
-          let force = 0;
-          if (dist > 60) {
-            force = (dist - 60) * 0.002 * delta.factor; // Gentle pull
-          } else {
-            force = (dist - 60) * 0.02 * delta.factor; // Strong push apart when too close
-          }
-
-          particle.velocity.x += nx * force;
-          particle.velocity.y += ny * force;
-        }
-      }
+    // --- 1. OVERLOAD MECHANISM ---
+    const MAX_CONNECTIONS = 6;
+    if (links && links.length > MAX_CONNECTIONS) {
+      links = [];
+      (particle as any).links = [];
+      config.connectionTime = 0;
+      config.maturity = Math.max(0, config.maturity - 50);
+      particle.velocity.x += (Math.random() - 0.5) * 2;
+      particle.velocity.y += (Math.random() - 0.5) * 2;
     }
 
-    // 1. BLACK SWAN LOGIC
+    const hasLinks = links && links.length > 0;
+
+    // --- 2. BLACK SWAN HOMING & DECAY ---
     if (config.isBlackSwan) {
-      // Black swans burn out quickly if they don't hit anything
+      // Delta-corrected friction: v_new = v_old * (1 - friction * dt)
+      // Base friction is say 2% per frame at 60fps.
+      const friction = 0.98 ** delta.factor;
+      particle.velocity.x *= friction;
+      particle.velocity.y *= friction;
+
       config.deathTimer -= 1 * delta.factor;
-      
-      // DECELERATION (Friction)
-      // The black swan enters like a meteor but loses momentum over time as it fights the entropy
-      // Soft friction so it slows down over its 10 second lifespan but does not stop instantly
-      particle.velocity.x *= 0.995;
-      particle.velocity.y *= 0.995;
-      
       if (config.deathTimer <= 0) {
         config.isBlackSwan = false;
-        config.hasHit = true; // Trigger death cycle
+        config.hasHit = true;
       }
 
-      // GUIDED MISSILE LOGIC (Targeting the Stagnation)
-      // The Black Swan actively hunts down the highest concentration of mature particles.
       let targetX = 0;
       let targetY = 0;
       let matureWeight = 0;
@@ -123,30 +99,70 @@ export class EvolutionUpdater implements IParticleUpdater {
       }
 
       if (matureWeight > 0) {
-        // Find the center of mass of the stagnant cluster
         targetX /= matureWeight;
         targetY /= matureWeight;
 
         const dx = targetX - particle.position.x;
         const dy = targetY - particle.position.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const distSq = dx * dx + dy * dy;
 
-        if (dist > 0) {
-          // Steer the velocity towards the target (Homing behavior)
+        if (distSq > 0) {
+          const dist = Math.sqrt(distSq);
+          // Homing force correctly multiplied by delta
           const steeringForce = 0.5 * delta.factor;
           particle.velocity.x += (dx / dist) * steeringForce;
           particle.velocity.y += (dy / dist) * steeringForce;
 
-          // Clamp max speed so it doesn't accelerate infinitely while homing
           const speed = Math.sqrt(particle.velocity.x ** 2 + particle.velocity.y ** 2);
-          if (speed > config.baseSpeed * 4) {
-            particle.velocity.x = (particle.velocity.x / speed) * config.baseSpeed * 4;
-            particle.velocity.y = (particle.velocity.y / speed) * config.baseSpeed * 4;
+          if (speed > config.baseSpeed * 2) {
+            particle.velocity.x = (particle.velocity.x / speed) * config.baseSpeed * 2;
+            particle.velocity.y = (particle.velocity.y / speed) * config.baseSpeed * 2;
           }
         }
       }
+    }
 
-      // Find nearby mature particles to shatter
+    // --- 3. FORCE-DIRECTED PHYSICS ---
+    if (!config.isBlackSwan) {
+      const allParticles = this.container.particles.filter(() => true) as EvolutionParticle[];
+      for (const other of allParticles) {
+        if (other === particle || other.destroyed) continue;
+
+        const dx = particle.position.x - other.position.x;
+        const dy = particle.position.y - other.position.y;
+        const distSq = dx * dx + dy * dy;
+
+        // REPULSION
+        if (distSq > 0 && distSq < 22500) {
+          const dist = Math.sqrt(distSq);
+          const repulseForce = (150 / (distSq + 100)) * delta.factor;
+          particle.velocity.x += (dx / dist) * repulseForce;
+          particle.velocity.y += (dy / dist) * repulseForce;
+        }
+      }
+
+      // ATTRACTION (Links)
+      if (hasLinks) {
+        for (const link of links) {
+          const other = link.destination as EvolutionParticle;
+          if (!other || other.destroyed) continue;
+
+          const dx = other.position.x - particle.position.x;
+          const dy = other.position.y - particle.position.y;
+          const distSq = dx * dx + dy * dy;
+
+          if (distSq > 0) {
+            const dist = Math.sqrt(distSq);
+            const attractForce = dist * 0.0005 * delta.factor;
+            particle.velocity.x += (dx / dist) * attractForce;
+            particle.velocity.y += (dy / dist) * attractForce;
+          }
+        }
+      }
+    }
+
+    // --- 4. SHATTER EVENT (Collision Check) ---
+    if (config.isBlackSwan) {
       const particles = this.container.particles.filter(() => true) as EvolutionParticle[];
       for (const other of particles) {
         if (
@@ -157,40 +173,29 @@ export class EvolutionUpdater implements IParticleUpdater {
         )
           continue;
 
-        // If the other particle is mature and close
         if (other.evolutionConfig.maturity > 50) {
           const dx = particle.position.x - other.position.x;
           const dy = particle.position.y - other.position.y;
           const distSq = dx * dx + dy * dy;
 
-          // Impact radius ~ 200px (MASSIVE explosion radius to shatter whole clusters)
-          if (distSq < 40000) {
-            // SHATTER EVENT
+          if (distSq < 25000) {
             other.evolutionConfig.maturity = 0;
-            other.evolutionConfig.deathTimer = 10; // Instantly start dying, very harsh penalty
-            if ((other as any).links) (other as any).links = []; // Force break links
+            other.evolutionConfig.deathTimer = 10;
+            if ((other as any).links) (other as any).links = [];
 
-            // Explosive repulsive bounce - make it truly violent and chaotic
-            const explosionForce = 300 / Math.max(Math.sqrt(distSq), 1);
+            // Massive kinetic injection
+            const explosionForce = 150 / Math.max(Math.sqrt(distSq), 10);
+            const actualForce = Math.min(explosionForce, 5); // Hard cap
+            other.velocity.x = -dx * actualForce + (Math.random() - 0.5) * 2;
+            other.velocity.y = -dy * actualForce + (Math.random() - 0.5) * 2;
 
-            // Add some random noise to the explosion so it scatters unpredictably
-            other.velocity.x = -dx * explosionForce + (Math.random() - 0.5) * 5;
-            other.velocity.y = -dy * explosionForce + (Math.random() - 0.5) * 5;
+            if (other.color) (other.color as any).value = '#fbbf24';
+            if (other.size) other.size.value = 5;
 
-            // Flash the particle brightly
-            if (other.color) {
-              (other.color as any).value = '#fbbf24'; // Flash bright amber
-            }
-            if (other.size) {
-              other.size.value = 5; // Puff up before shrinking
-            }
-
-            // Flag that we hit something
             particle.evolutionConfig.hasHit = true;
           }
         }
       }
-      return; // Black swans don't follow normal aging
     }
 
     if (config.hasHit) {
@@ -199,116 +204,109 @@ export class EvolutionUpdater implements IParticleUpdater {
       config.hasHit = false;
     }
 
-    // 2. NORMAL EVOLUTION LOGIC
+    // --- 5. EVOLUTION & LIFECYCLE ---
     if (hasLinks) {
-      // CONNECTION: Immortality & Growth
-      config.deathTimer = config.maxDeathTimer; // Reset timer
+      config.connectionTime += 1 * delta.factor;
+    } else {
+      config.connectionTime = Math.max(0, config.connectionTime - 2 * delta.factor);
+    }
+
+    const hasStableConnection = config.connectionTime > 60;
+
+    if (hasStableConnection) {
+      config.deathTimer = config.maxDeathTimer;
 
       if (config.maturity < config.maxMaturity) {
-        config.maturity += 0.33 * delta.factor; // Grow 3x slower so the evolution takes more time
+        config.maturity += 0.33 * delta.factor;
       }
 
-      // Visual mapping: Grow size and opacity based on maturity with LERP for silk smoothness
       const maturityRatio = config.maturity / config.maxMaturity;
       if (particle.size) {
         const targetSize = config.baseSize + maturityRatio * 2.5;
-        // Lerp factor 0.05 means it smoothly glides to the target size over multiple frames
+        // Proper LERP with delta
+        const lerpFactor = 1 - 0.98 ** delta.factor;
         particle.size.value =
-          (particle.size.value as number) +
-          (targetSize - particle.size.value) * 0.02 * delta.factor;
+          (particle.size.value as number) + (targetSize - particle.size.value) * lerpFactor;
       }
       if (particle.opacity) {
         const targetOpacity = config.baseOpacity + maturityRatio * 0.5;
+        const lerpFactor = 1 - 0.98 ** delta.factor;
         particle.opacity.value =
           ((particle.opacity.value as number) || 0) +
-          (targetOpacity - (particle.opacity.value || 0)) * 0.02 * delta.factor;
+          (targetOpacity - ((particle.opacity.value as number) || 0)) * lerpFactor;
       }
 
-      // Physical mapping: Stagnation (slow down as it matures)
-      // Velocity damping
-      const damping = 1 - maturityRatio * 0.7; // Slow down by up to 70%, so they still drift slowly together
-      // In tsParticles, directly modifying velocity every frame can be tricky due to internal normalizations.
-      // We apply a soft clamp.
+      // STAGNATION CLAMP
+      const damping = 1 - maturityRatio * 0.7;
       const currentSpeed = Math.sqrt(particle.velocity.x ** 2 + particle.velocity.y ** 2);
       const targetSpeed = config.baseSpeed * damping;
-      // Only clamp if it's maturing/stagnating. If it just got shattered (maturity=0 but speed is huge), let it fly!
       if (currentSpeed > targetSpeed && currentSpeed > 0.1 && config.maturity > 5) {
-        // Harder clamp to prevent jittering when clustered
         const ratio = targetSpeed / currentSpeed;
         particle.velocity.x *= ratio;
         particle.velocity.y *= ratio;
       }
     } else {
-      // ISOLATION: Decay & Death
       if (config.maturity > 0) {
-        config.maturity -= 2 * delta.factor; // Shrink fast if disconnected
+        config.maturity -= 2 * delta.factor;
         if (config.maturity < 0) config.maturity = 0;
+      }
+
+      const currentSpeed = Math.sqrt(particle.velocity.x ** 2 + particle.velocity.y ** 2);
+
+      if (currentSpeed < config.baseSpeed) {
+        // Delta-corrected acceleration
+        const accel = 1.05 ** delta.factor;
+        particle.velocity.x *= accel;
+        particle.velocity.y *= accel;
+      } else if (currentSpeed > config.baseSpeed * 1.5) {
+        // Delta-corrected global cooling friction for explosion fragments
+        const cooling = 0.96 ** delta.factor; // 4% friction
+        particle.velocity.x *= cooling;
+        particle.velocity.y *= cooling;
       }
 
       config.deathTimer -= 1 * delta.factor;
 
-      // If it's close to death, fade it out instead of restoring base properties
       if (config.deathTimer < 60) {
-        const deathRatio = Math.max(0, config.deathTimer / 60); // 1.0 down to 0.0
-        if (particle.opacity) {
-          particle.opacity.value = config.baseOpacity * deathRatio;
-        }
-        if (particle.size) {
-          particle.size.value = config.baseSize * deathRatio;
-        }
+        const deathRatio = Math.max(0, config.deathTimer / 60);
+        if (particle.opacity) particle.opacity.value = config.baseOpacity * deathRatio;
+        if (particle.size) particle.size.value = config.baseSize * deathRatio;
       } else {
-        // Normal isolation - restore to base properties smoothly
         if (particle.size) {
+          const lerpFactor = 1 - 0.95 ** delta.factor;
           particle.size.value =
-            (particle.size.value as number) +
-            (config.baseSize - particle.size.value) * 0.02 * delta.factor;
+            (particle.size.value as number) + (config.baseSize - particle.size.value) * lerpFactor;
         }
         if (particle.opacity) {
+          const lerpFactor = 1 - 0.95 ** delta.factor;
           particle.opacity.value =
             ((particle.opacity.value as number) || 0) +
-            (config.baseOpacity - (particle.opacity.value || 0)) * 0.02 * delta.factor;
+            (config.baseOpacity - ((particle.opacity.value as number) || 0)) * lerpFactor;
         }
       }
 
       if (config.deathTimer <= 0) {
-        // Instead of destroying (which permanently depletes population if emitters fail), we "respawn" it
-        particle.position.x = Math.random() * (particle.container.canvas.size.width || 800);
-        particle.position.y = Math.random() * (particle.container.canvas.size.height || 800);
-
-        // Spawn anywhere randomly in the infinite canvas
         particle.position.x = Math.random() * (particle.container.canvas.size.width || 800);
         particle.position.y = Math.random() * (particle.container.canvas.size.height || 800);
 
         config.deathTimer = config.maxDeathTimer;
         config.maturity = 0;
+        config.connectionTime = 0;
 
-        // Reset base properties but keep opacity at 0 so the LERP at the top of the loop smoothly fades it IN
         if (particle.opacity) particle.opacity.value = 0;
         if (particle.size) particle.size.value = 0;
 
-        // Re-roll Black Swan based on global stagnation
         const allParticles = this.container.particles.filter(() => true) as EvolutionParticle[];
         let matureCount = 0;
+        let swanCount = 0;
         for (const p of allParticles) {
+          if (p.evolutionConfig?.isBlackSwan) swanCount++;
           if (p.evolutionConfig && p.evolutionConfig.maturity > 80) matureCount++;
         }
 
         const stagnationRatio = matureCount / allParticles.length;
-
-        // POPULATION CONTROL: Count existing black swans to prevent armies
-        let swanCount = 0;
-        for (const p of allParticles) {
-          if (p.evolutionConfig && p.evolutionConfig.isBlackSwan) {
-            swanCount++;
-          }
-        }
-
-        // Only allow ONE black swan in the entire universe at any given time.
-        // It's a singular historical event.
-        let spawnChance = 0.0; // Never spawn by default
-
-        if (stagnationRatio > 0.4 && swanCount === 0) {
-          // 2% chance per respawn ONLY when highly stagnant and no other swans exist.
+        let spawnChance = 0.0;
+        if (stagnationRatio > 0.5 && swanCount === 0) {
           spawnChance = 0.02;
         }
 
