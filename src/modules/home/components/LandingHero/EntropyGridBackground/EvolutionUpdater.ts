@@ -286,10 +286,24 @@ export class EvolutionUpdater implements IParticleUpdater {
         }
 
         const stagnationRatio = matureCount / allParticles.length;
-        // If more than 30% of the network is highly mature/stagnant, the chance of a black swan spikes to 20%
-        // Otherwise, it's extremely rare
-        // Reduce black swan probability drastically so it feels truly rare.
-        const spawnChance = stagnationRatio > 0.3 ? 0.05 : 0.0005;
+
+        // POPULATION CONTROL: Count existing black swans to prevent armies
+        let swanCount = 0;
+        for (const p of allParticles) {
+          if (p.evolutionConfig && p.evolutionConfig.isBlackSwan) {
+            swanCount++;
+          }
+        }
+
+        // Only allow ONE black swan in the entire universe at any given time.
+        // It's a singular historical event.
+        let spawnChance = 0.0; // Never spawn by default
+
+        if (stagnationRatio > 0.4 && swanCount === 0) {
+          // 2% chance per respawn ONLY when highly stagnant and no other swans exist.
+          spawnChance = 0.02;
+        }
+
         config.isBlackSwan = Math.random() < spawnChance;
 
         if (config.isBlackSwan) {
