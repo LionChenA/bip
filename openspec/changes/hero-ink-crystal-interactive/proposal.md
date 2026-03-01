@@ -1,20 +1,23 @@
 ## Why
 
-The current Landing Page background relies on a custom `d3-force` physics engine. While functional, it lacks aesthetic refinement and fails to convey the website's underlying philosophy: a synthesis of "Swiss Flux" minimalism, Chinese ink-wash negative space (留白), and the Marxist humanistic concept of "Life feeds on negative entropy." We need to replace this with a high-performance, interactive art installation that visually represents the Zettelkasten knowledge growth process (entropy reduction) through human interaction.
+The current Landing Page background relies on a custom `d3-force` physics engine. While functional, it lacks aesthetic refinement and fails to convey the website's underlying philosophy: a synthesis of "Swiss Flux" minimalism, Zettelkasten knowledge growth, and the personal creed that "meaningful things happen by chance, and changing life requires risk." We need to replace this with a high-performance, algorithmic art installation that visually represents this "Black Swan" evolution: the slow, stagnant buildup of knowledge networks, punctuated by random, chaotic collisions that break old paradigms and spark new connections.
 
 ## What Changes
 
 - **BREAKING**: Completely remove the existing `d3-force` based `ConstellationBackground` component.
 - Introduce `tsparticles` (v3) as the high-performance 2D Canvas rendering engine.
-- Implement a global "Ink-Wash" background: a highly restrained, sparse, slow-moving particle network with minimal connections, representing raw data and negative space.
-- Implement the "Ink Crystal" interactive Hero installation: a localized gravity well triggered by mouse clicks that captures chaotic background particles and forces them into a breathing, softened geometric structure (Polygon Mask), representing human agency ordering information into knowledge.
+- Shift visual aesthetic from soft "ink wash" to crisp, modern "Cyber/Tech" geometry (circular nodes, linear movements, sharp links).
+- Implement a custom `ParticleUpdater` evolution algorithm:
+  - **Serendipity (Connection)**: Isolated particles decay and die. When particles accidentally meet and link, they become immortal, grow in maturity (size/brightness), and slow down.
+  - **Stagnation**: Large clusters of immortal particles become stagnant and slow-moving (representing rigid, planned knowledge paradigms).
+  - **The Black Swan (Destruction)**: A rare, high-velocity "chaos particle" randomly spawns. Upon collision with a stagnant cluster, it shatters all links, stripping particles of their immortality and forcing a chaotic reset/re-evolution.
 
 ## Capabilities
 
 ### New Capabilities
 
-- `hero-ink-crystal`: Defines the interactive hero installation, including the polygon mask gravity well, particle capture logic, dragging behavior, and the soft "ink" rendering effects.
-- `global-particle-base`: Defines the restrained, slow-moving, sparse particle network that serves as the foundation for the entire site, handling subtle life spans and faint connections.
+- `entropy-grid-physics`: Defines the underlying rigid, geometric particle network with basic physical collisions (bounce) and sharp link rendering.
+- `knowledge-evolution-algorithm`: A custom `ParticleUpdater` hook for tsParticles that implements the complex logic of isolation decay, connection-based immortality/growth, stagnation, and the "Black Swan" destruction events.
 
 ### Modified Capabilities
 
@@ -22,6 +25,6 @@ The current Landing Page background relies on a custom `d3-force` physics engine
 
 ## Impact
 
-- **UI/Components**: Will heavily modify the `src/modules/home/components/LandingHero/` directory, specifically replacing the background components.
-- **Dependencies**: Requires adding `@tsparticles/engine`, `@tsparticles/slim`, `@tsparticles/plugin-polygon-mask`, and `astro-particles`. The `d3-force` package and its types will be removed.
-- **Performance**: Shifting from DOM/SVG-based link calculations to a highly optimized Canvas 2D engine is expected to significantly improve rendering performance and eliminate layout thrashing for particle networks.
+- **UI/Components**: Will heavily modify the `src/modules/home/components/LandingHero/` directory, renaming `InkCrystalBackground` to `EntropyGridBackground`.
+- **Dependencies**: Requires adding `@tsparticles/engine`, `@tsparticles/slim`, and `astro-particles`. `d3-force` and the previously planned `@tsparticles/plugin-polygon-mask` will be removed.
+- **Performance**: While Canvas is highly optimized, the custom O(N) `ParticleUpdater` loop must be carefully written to avoid performance drops during maturity calculations and collision detection.

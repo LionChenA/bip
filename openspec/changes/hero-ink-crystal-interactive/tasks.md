@@ -1,29 +1,38 @@
-## 1. Environment Setup & Cleanup
+## 1. Environment & Architecture Updates (Completed)
 
-- [ ] 1.1 Remove `d3-force` and `@types/d3-force` from `package.json` dependencies.
-- [ ] 1.2 Delete the existing `src/modules/home/components/LandingHero/ConstellationBackground` directory and its contents.
-- [ ] 1.3 Install new dependencies: `@tsparticles/engine`, `@tsparticles/slim`, `@tsparticles/plugin-polygon-mask`, and `astro-particles`.
+- [x] 1.1 Remove `d3-force` and `@types/d3-force` from `package.json` dependencies.
+- [x] 1.2 Delete the existing `src/modules/home/components/LandingHero/ConstellationBackground` directory and its contents.
+- [x] 1.3 Install new dependencies: `@tsparticles/engine`, `@tsparticles/slim`, and `astro-particles`.
+- [x] 1.4 Rename component from `InkCrystalBackground` to `EntropyGridBackground` to reflect the new Cyber/Tech aesthetic.
 
-## 2. Global Particle Base Implementation
+## 2. Entropy Grid Physics Implementation (Completed)
 
-- [ ] 2.1 Create `src/modules/home/components/LandingHero/InkCrystalBackground/index.tsx`.
-- [ ] 2.2 Define the base `tsparticles` options for the `global-particle-base`: sparse particle count (~80), extremely slow random bounce movement (`speed: 0.2`).
-- [ ] 2.3 Configure particle lifecycle in base options: subtle opacity animations for birth/death and random delay for respawn.
-- [ ] 2.4 Configure faint connections in base options: `links` with low opacity and short distance.
-- [ ] 2.5 Implement a CSS variable reader or theme observer in the component to extract `--foreground` and `--primary` colors from Tailwind for the particles and links.
+- [x] 2.1 Update the base `tsparticles` options for the `entropy-grid-physics`: geometric shape (`circle`), sharper linear movement (`speed: {min: 0.5, max: 1.5}`).
+- [x] 2.2 Remove all CSS `blur()` and `mix-blend-mode` effects to ensure a crisp, high-contrast look.
+- [x] 2.3 Enable physical particle collisions (`collisions: { enable: true, mode: 'bounce' }`).
+- [x] 2.4 Configure sharp connections: `links` with higher opacity and `width: 1.5`.
+- [x] 2.5 Ensure the component uses proper light/dark mode hex colors for maximum visibility.
 
-## 3. Ink Crystal Interactive Implementation
+## 3. Knowledge Evolution Algorithm (Custom Updater)
 
-- [ ] 3.1 Configure the `@tsparticles/plugin-polygon-mask` within the `tsparticles` options, defining an inline SVG path for a Hexagon, initially disabled or scaled to 0.
-- [ ] 3.2 Add mouse event listeners (`onMouseDown`, `onMouseMove`, `onMouseUp`) to the container div or canvas overlay.
-- [ ] 3.3 Implement the `onMouseDown` handler: Use the `tsParticles` instance API to enable the polygon mask at the cursor's location and activate `attract` mode.
-- [ ] 3.4 Implement the `onMouseMove` handler: Update the polygon mask offset coordinates dynamically while the mouse is pressed (dragging).
-- [ ] 3.5 Implement the `onMouseUp` handler: Disable the polygon mask and reset the `attract` mode, returning particles to chaos.
-- [ ] 3.6 Apply CSS styling (e.g., `filter: blur()`) to the particles or the canvas container to achieve the "ink wash" softening effect over the rigid geometric hexagon.
+- [ ] 3.1 Create `src/modules/home/components/LandingHero/EntropyGridBackground/EvolutionUpdater.ts` implementing `IParticleUpdater` from `@tsparticles/engine`.
+- [ ] 3.2 Implement `init(particle)` method to inject custom variables: `deathTimer` (e.g., 300 frames), `maturity` (0.0 to 1.0), and `isBlackSwan` (boolean).
+- [ ] 3.3 Implement `update(particle)` method: Check `particle.links.length`. If 0, decrement `deathTimer`. If > 0, reset `deathTimer` and increment `maturity`.
+- [ ] 3.4 Implement visual mapping in `update()`: Interpolate `particle.options.size.value` based on `maturity` (e.g., from 1px to 4px).
+- [ ] 3.5 Implement death logic in `update()`: If `deathTimer <= 0`, call `particle.destroy()`.
+- [ ] 3.6 Hook the custom updater into the engine during `initParticlesEngine` via `engine.addParticleUpdater()`.
 
-## 4. Integration & Verification
+## 4. The Black Swan Mechanism
 
-- [ ] 4.1 Update `src/modules/home/components/LandingHero/LandingHero.tsx` to import and render the new `InkCrystalBackground` component instead of `ConstellationBackground`.
-- [ ] 4.2 Run `pnpm check` to ensure Biome linting and Astro type checking pass without errors.
-- [ ] 4.3 Manually verify in the browser: The background should be sparse and slow.
-- [ ] 4.4 Manually verify in the browser: Clicking should form the glowing Hexagon crystal, and dragging should move it while capturing nearby particles.
+- [ ] 4.1 In the `EntropyGridBackground` component, add a generic mechanism to replenish dead particles to keep the population stable.
+- [ ] 4.2 In `EvolutionUpdater`, add logic to occasionally spawn/flag a `isBlackSwan` particle.
+- [ ] 4.3 In the `update` loop, check distances between the Black Swan and mature particles.
+- [ ] 4.4 If a collision/proximity occurs, trigger the "Shatter" event: reset the target's `maturity` to 0, break its links, and apply a sudden velocity burst.
+
+## 5. Integration & Verification
+
+- [x] 5.1 Update `src/modules/home/components/LandingHero/LandingHero.tsx` to render the new `EntropyGridBackground`.
+- [ ] 5.2 Run `pnpm check` to ensure Biome linting and Astro type checking pass without errors.
+- [ ] 5.3 Manually verify: Isolated particles should shrink and disappear after a few seconds.
+- [ ] 5.4 Manually verify: Connected particles should grow larger and stay alive indefinitely.
+- [ ] 5.5 Manually verify: The Black Swan event successfully shatters stagnant clusters.

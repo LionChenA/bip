@@ -1,41 +1,48 @@
 ## Context
 
-The personal website currently features a `d3-force` based constellation background. To better align with the core philosophy ("Swiss Flux" minimalism, Chinese ink-wash aesthetics, and Marxist humanism), we are completely replacing this with a `tsparticles` (v3) canvas implementation. The new background acts as a global data void (chaos), while the Hero area acts as an interactive art installation (the "Ink Crystal") where human interaction (clicking/dragging) imposes geometric order (negative entropy) on the chaos.
+We are building a highly customized, algorithmic particle background for the Landing Page using `tsparticles` v3. Moving away from both the old `d3-force` implementation and the previously proposed "Ink Wash Hexagon" idea, we are now aiming for a sharp, modern "Entropy Grid". The core interaction is no longer driven by a geometric mask, but by a complex, emergent physical evolution algorithm ("The Black Swan" collision model) that serves as a metaphor for Zettelkasten knowledge iteration: isolated ideas die, connected ideas grow and stagnate, and rare chaotic events destroy old paradigms to make way for new ones.
 
 ## Goals / Non-Goals
 
 **Goals:**
-- Render a highly performant (60FPS), sparse global particle background representing raw data and negative space.
-- Implement an interactive "Ink Crystal" that forms upon user click, capturing nearby chaotic particles into a softened Hexagon shape (Polygon Mask).
-- Ensure the interaction clearly conveys the metaphor of "Life feeds on negative entropy" (moving from chaos to organized structure via human agency).
-- Use `@tsparticles/slim` to minimize bundle size while retaining necessary features (links, life span, shapes).
-- Integrate seamlessly with existing Tailwind color tokens (light/dark mode).
+- Implement a sharp, modern cyber aesthetic (crisp circles, linear movement, no blur).
+- Write a custom `IParticleUpdater` for `tsparticles` to handle the complex "Immortality & Maturity" logic based on link states.
+- Introduce a "Black Swan" (Chaos Particle) mechanism to break the "Giant Immortal Cluster" deadlock.
+- Maintain smooth 60FPS despite per-frame custom physical calculations.
 
 **Non-Goals:**
-- Creating a complex WebGL/Three.js 3D environment (we are sticking to 2D Canvas for minimalism and performance).
-- Applying generic, overused particle templates (e.g., standard "snow" or "matrix" effects).
-- Routing background particles behind text in a way that hurts readability (particles must remain extremely faint).
+- Using external React intervals to control particle state (causes desync; must use internal tsParticles updaters).
+- Using Polygon Masks or rigid shapes. The clusters should emerge naturally via distance-based links and collisions.
+- Creating an overly complex node-gravity model. Simple `bounce` collisions combined with linear drift is sufficient.
 
 ## Decisions
 
-### 1. Rendering Engine: `tsparticles` v3
-- **Rationale:** `tsparticles` v3 is highly modular. By using `@tsparticles/slim`, we get core canvas drawing, standard shapes, and interaction links for ~30-35KB gzipped. It natively supports the required `life` span attributes and `links`, whereas DOM-based animation libraries (GSAP, Framer Motion) would cause severe layout thrashing when drawing hundreds of interconnecting lines.
-- **Alternatives Considered:** Raw HTML5 Canvas (too much boilerplate for handling resize, retina display, and complex physics), Three.js (massive bundle size, overkill for a 2D effect), GSAP (unusable performance for particle line drawing).
+### 1. Rendering Engine & Baseline Physics
+- **Rationale:** We stick with `@tsparticles/slim` for minimal bundle size. We will use native `shape: 'circle'`, `links`, and `collisions: { enable: true, mode: 'bounce' }`. This provides the baseline "atoms" of the system.
 
-### 2. The "Ink Crystal" Implementation: Polygon Mask Plugin
-- **Rationale:** To create the Hexagon structure upon click, we will use `@tsparticles/plugin-polygon-mask`. This plugin allows us to define an SVG path (a hexagon) and force particles to adhere to its vertices and edges.
-- **Interaction Flow:**
-  - Base state: Polygon mask is disabled or scaled to 0.
-  - `onMouseDown`: Trigger the `tsparticles` instance to enable the mask at the cursor's location and increase local `attract` values.
-  - `onMouseMove` (while dragging): Update the mask's offset coordinates.
-  - `onMouseUp`: Disable the mask, releasing particles back into chaos.
+### 2. Custom Updater: The Evolution Algorithm
+- **Rationale:** Standard `tsparticles` features cannot handle "reset life on connection" or "grow based on connection time." We must write a custom class implementing `IParticleUpdater`.
+- **Implementation Strategy:**
+  - Hook into the engine via `engine.addParticleUpdater()`.
+  - In the `update(particle, delta)` method:
+    - Check if `particle.links.length > 0`.
+    - If yes: Freeze death timer. Increase a custom `maturity` property up to a max limit. Interpolate `particle.options.size.value` and `opacity` based on maturity. Apply a damping factor to velocity (stagnation).
+    - If no: Decrease death timer. Shrink maturity. If timer < 0, call `particle.destroy()`.
 
-### 3. The "Ink Wash" Softening: CSS Blur vs. Canvas Rendering
-- **Rationale:** To achieve the "ink wash" (水墨) feel and prevent the geometric hexagon from looking too rigid, we will apply a slight CSS `backdrop-blur` or `filter: blur()` to the canvas container, combined with particle properties like `opacity.animation` and `wobble`. This provides an organic, breathing aesthetic over the cold geometry.
+### 3. The Black Swan (Chaos Particle) Mechanism
+- **Rationale:** To solve the "Giant Immortal Cluster" problem where the screen fills with max-maturity particles that never die, we introduce a paradigm-breaking mechanism.
+- **Implementation Strategy:**
+  - The updater will track the global population and cluster sizes.
+  - Randomly (e.g., 0.1% chance per second), or triggered by user click, a particle is spawned or converted into a "Black Swan".
+  - A Black Swan is visually distinct (e.g., bright red/accent color, moves very fast).
+  - In the collision detection phase (or manual distance check in the updater), if a Black Swan touches a particle that has `maturity > 0`, it triggers a "Shatter" event:
+    - The target particle and all particles recursively linked to it have their `links` forcibly severed, `maturity` reset to 0, and a repulsive velocity burst applied.
 
 ## Risks / Trade-offs
 
-- **Risk:** Implementing custom state-driven interactions (Click to enable Polygon Mask) might conflict with `tsparticles` internal event loops.
-  - **Mitigation:** Rely on the `tsParticles.engine` instance API to update options dynamically (`instance.options.load()`) rather than trying to force React state down to the canvas aggressively.
-- **Risk:** The Polygon Mask plugin might increase bundle size slightly.
-  - **Mitigation:** Verify bundle size post-installation. The visual payoff of the "Entropy Reduction" metaphor justifies the plugin's cost.
+- **Risk: Performance of the Updater Loop:** Checking recursive links and modifying size/opacity on every frame for 60+ particles can degrade performance.
+  - **Mitigation:** Avoid complex recursive checks every frame. Implement a cooldown/throttle (e.g., only calculate maturity updates every 5th frame). Use simple distance checks rather than deep graph traversal for the "Shatter" effect.
+- **Risk: Visual Flicker on Link Thresholds:** Particles dancing on the edge of the link distance will cause their links to turn on and off rapidly, causing their "maturity" to jitter.
+  - **Mitigation:** Implement Hysteresis in the Custom Updater. A particle must lose connections for at least 0.5 seconds before it starts losing maturity and shrinking.
+- **Risk: Extinction:** If isolated particles die too fast, the screen empties out.
+  - **Mitigation:** Ensure `particles.number.value` combined with an active emitter or native replacement mechanism keeps spawning new "infant" particles to replace dead ones.
