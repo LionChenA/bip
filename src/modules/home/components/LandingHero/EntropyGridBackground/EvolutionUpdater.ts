@@ -92,11 +92,50 @@ export class EvolutionUpdater implements IParticleUpdater {
 
     // 1. BLACK SWAN LOGIC
     if (config.isBlackSwan) {
-      // Black swans burn out quickly if they don't hit anything (e.g., 5 seconds = 300 frames)
+      // Black swans burn out quickly if they don't hit anything
       config.deathTimer -= 1 * delta.factor;
       if (config.deathTimer <= 0) {
         config.isBlackSwan = false;
         config.hasHit = true; // Trigger death cycle
+      }
+
+      // GUIDED MISSILE LOGIC (Targeting the Stagnation)
+      // The Black Swan actively hunts down the highest concentration of mature particles.
+      let targetX = 0;
+      let targetY = 0;
+      let matureWeight = 0;
+
+      const allParticles = this.container.particles.filter(() => true) as EvolutionParticle[];
+      for (const p of allParticles) {
+        if (p !== particle && p.evolutionConfig && p.evolutionConfig.maturity > 50) {
+          targetX += p.position.x * p.evolutionConfig.maturity;
+          targetY += p.position.y * p.evolutionConfig.maturity;
+          matureWeight += p.evolutionConfig.maturity;
+        }
+      }
+
+      if (matureWeight > 0) {
+        // Find the center of mass of the stagnant cluster
+        targetX /= matureWeight;
+        targetY /= matureWeight;
+
+        const dx = targetX - particle.position.x;
+        const dy = targetY - particle.position.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist > 0) {
+          // Steer the velocity towards the target (Homing behavior)
+          const steeringForce = 0.5 * delta.factor;
+          particle.velocity.x += (dx / dist) * steeringForce;
+          particle.velocity.y += (dy / dist) * steeringForce;
+
+          // Clamp max speed so it doesn't accelerate infinitely while homing
+          const speed = Math.sqrt(particle.velocity.x ** 2 + particle.velocity.y ** 2);
+          if (speed > config.baseSpeed * 4) {
+            particle.velocity.x = (particle.velocity.x / speed) * config.baseSpeed * 4;
+            particle.velocity.y = (particle.velocity.y / speed) * config.baseSpeed * 4;
+          }
+        }
       }
 
       // Find nearby mature particles to shatter
