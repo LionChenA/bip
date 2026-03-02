@@ -132,9 +132,7 @@ export const EntropyGridBackground = () => {
         opacity: {
           value: { min: 0.3, max: 0.8 },
           animation: {
-            enable: true,
-            speed: 0.5,
-            sync: false,
+            enable: false, // Disabled to allow EvolutionUpdater to control opacity
           },
         },
         shape: {
@@ -146,9 +144,7 @@ export const EntropyGridBackground = () => {
         size: {
           value: { min: 1, max: 3 },
           animation: {
-            enable: true,
-            speed: 1,
-            sync: false,
+            enable: false, // Disabled to allow EvolutionUpdater to control size
           },
         },
       },
