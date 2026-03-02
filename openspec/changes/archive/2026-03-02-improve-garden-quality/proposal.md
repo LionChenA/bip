@@ -12,7 +12,7 @@ To improve the robustness, maintainability, and developer experience of the Digi
 ## Capabilities
 
 ### New Capabilities
-- `garden-maintenance`: Improvements to the internal quality and reliability of the garden module.
+- `garden-maintenance`: Improvements to the internal quality and reliability of the garden module. The system MUST provide high quality of code.
 
 ### Modified Capabilities
 <!-- No existing functional requirements are changing, just implementation quality. -->
