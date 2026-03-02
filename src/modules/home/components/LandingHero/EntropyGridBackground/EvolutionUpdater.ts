@@ -60,7 +60,7 @@ export class EvolutionUpdater implements IParticleUpdater {
       particle.velocity.x *= 2;
       particle.velocity.y *= 2;
       if (particle.color) {
-        particle.color.value = '#ef4444'; // Tailwind red-500
+        particle.options.color.value = "#ef4444"; // Tailwind red-500
       }
     }
   }
@@ -246,7 +246,7 @@ export class EvolutionUpdater implements IParticleUpdater {
           other.velocity.y = -dy * actualForce + (Math.random() - 0.5) * 2;
 
           if (other.color) {
-            other.color.value = '#fbbf24';
+            other.options.color.value = "#fbbf24";
           }
           if (other.size) other.size.value = 5;
 
@@ -370,13 +370,13 @@ export class EvolutionUpdater implements IParticleUpdater {
           particle.velocity.x *= 4;
           particle.velocity.y *= 4;
           if (particle.color) {
-            particle.color.value = '#ef4444';
+            particle.options.color.value = "#ef4444";
           }
         } else {
           if (particle.color) {
             const colorValue = particle.options.color.value;
             if (typeof colorValue === 'string') {
-              particle.color.value = colorValue;
+              particle.options.color.value = colorValue;
             }
           }
         }
@@ -387,8 +387,7 @@ export class EvolutionUpdater implements IParticleUpdater {
 
 // Function to register the updater plugin
 export async function loadEvolutionUpdater(engine: Engine): Promise<void> {
-  await engine.addParticleUpdater(
-    'evolution',
-    async (container) => new EvolutionUpdater(container)
+  await engine.addParticleUpdater('evolution', (container) =>
+    Promise.resolve(new EvolutionUpdater(container))
   );
 }
