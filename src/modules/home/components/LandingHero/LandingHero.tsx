@@ -2,8 +2,8 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { siteConfig } from '@/modules/infra/data/siteConfig';
 import { CoordinateNav } from './CoordinateNav';
+import { EntropyGridBackground } from './EntropyGridBackground';
 import { FluxSlogan } from './FluxSlogan';
-import { TrailGrid } from './TrailGrid';
 
 export const LandingHero: React.FC = () => {
   const [lang, setLang] = useState<'en' | 'zh'>('zh');
@@ -18,19 +18,26 @@ export const LandingHero: React.FC = () => {
 
   return (
     <section className="relative flex min-h-screen w-full flex-col justify-center overflow-hidden bg-background">
-      <TrailGrid />
+      <div className="absolute inset-0 z-0">
+        <EntropyGridBackground />
+      </div>
 
-      <div className="container relative z-10 mx-auto px-6">
+      <div className="container pointer-events-none relative z-10 mx-auto flex h-full flex-col justify-center px-6">
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-12 mb-12 flex flex-col items-center text-center">
             <div className="mb-4 font-mono text-[10px] text-primary uppercase tracking-[0.3em]">
               {currentTitle}
             </div>
-            <FluxSlogan text={currentSlogan} />
+            {/* Re-enable pointer events for the interactive parts */}
+            <div className="pointer-events-auto">
+              <FluxSlogan text={currentSlogan} />
+            </div>
           </div>
 
           <div className="col-span-12 flex flex-col items-center justify-between gap-12 md:col-span-10 md:col-start-2 md:flex-row">
-            <CoordinateNav />
+            <div className="pointer-events-auto">
+              <CoordinateNav />
+            </div>
 
             <div className="hidden max-w-xs text-right md:block">
               <p className="font-sans text-[10px] text-muted-foreground uppercase leading-relaxed tracking-[0.2em]">

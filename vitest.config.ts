@@ -1,10 +1,10 @@
-/// <reference types="vitest" />
-import { getViteConfig } from 'astro/config';
+import { defineConfig } from 'vitest/config';
 
-export default getViteConfig({
+export default defineConfig({
   test: {
     environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
     globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
   },
 });
