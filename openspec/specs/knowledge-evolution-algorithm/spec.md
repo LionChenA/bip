@@ -45,3 +45,10 @@ The system SHALL dynamically spawn a rare "Black Swan" to destroy overly stagnan
 - **THEN** the Black Swan is instantly consumed (burns out)
 - **AND** all mature particles within the blast radius lose their links, flash amber (`#fbbf24`), puff up, and have their maturity instantly reset to 0
 - **AND** a massive blast of kinetic velocity combined with random noise is applied to scatter the former cluster
+
+### Requirement: Spatially Crowded Overload
+If a node accumulates too many active connections (>6), it SHALL suffer an internal collapse due to spatial crowding.
+
+#### Scenario: Network Overload
+- **WHEN** a particle's active links exceed the maximum allowed threshold
+- **THEN** it instantly severs all connections, loses significant maturity, and is pushed away

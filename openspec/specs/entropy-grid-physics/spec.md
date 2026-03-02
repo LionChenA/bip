@@ -43,3 +43,14 @@ The particles and links SHALL utilize appropriate high-contrast colors derived f
 #### Scenario: Theme Toggle
 - **WHEN** the user switches between light and dark mode
 - **THEN** particles use a dark color in light mode and a light color in dark mode
+
+### Requirement: Mass and Inertia
+Particles SHALL possess varying physical mass based on their maturity to resist external forces.
+
+#### Scenario: Collision with a Mature Particle
+- **WHEN** a repulsive or attractive force is applied to a particle
+- **THEN** the resulting acceleration is divided by the particle's mass (from 1 to 10)
+- **AND** highly mature particles (mass=10) remain virtually unmoved by minor perturbations
+
+### Requirement: Absolute Velocity Clamping
+The physics engine SHALL strictly clamp the instantaneous acceleration from forces to prevent slingshotting and numerical explosions.
