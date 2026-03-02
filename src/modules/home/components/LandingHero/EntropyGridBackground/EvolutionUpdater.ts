@@ -8,10 +8,6 @@ declare module '@tsparticles/engine' {
   interface IParticleHslAnimation {
     value?: string | string[];
   }
-
-  interface Particles {
-    array: Particle[];
-  }
 }
 
 // Extended particle type to hold our custom physics variables
@@ -60,7 +56,7 @@ export class EvolutionUpdater implements IParticleUpdater {
       particle.velocity.x *= 2;
       particle.velocity.y *= 2;
       if (particle.color) {
-        particle.options.color.value = "#ef4444"; // Tailwind red-500
+        particle.options.color.value = '#ef4444'; // Tailwind red-500
       }
     }
   }
@@ -70,7 +66,7 @@ export class EvolutionUpdater implements IParticleUpdater {
 
     const config = particle.evolutionConfig;
     const mass = 1 + (config.maturity / config.maxMaturity) * 9; // Scales linearly from 1 (young) to 10 (mature)
-    const allParticles = this.container.particles.array as EvolutionParticle[];
+    const allParticles = this.container.particles.filter(() => true) as EvolutionParticle[];
 
     // --- 1. OVERLOAD MECHANISM ---
     this.applyCrowdingOverload(particle, config, mass);
@@ -246,7 +242,7 @@ export class EvolutionUpdater implements IParticleUpdater {
           other.velocity.y = -dy * actualForce + (Math.random() - 0.5) * 2;
 
           if (other.color) {
-            other.options.color.value = "#fbbf24";
+            other.options.color.value = '#fbbf24';
           }
           if (other.size) other.size.value = 5;
 
@@ -370,7 +366,7 @@ export class EvolutionUpdater implements IParticleUpdater {
           particle.velocity.x *= 4;
           particle.velocity.y *= 4;
           if (particle.color) {
-            particle.options.color.value = "#ef4444";
+            particle.options.color.value = '#ef4444';
           }
         } else {
           if (particle.color) {
