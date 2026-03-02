@@ -1,10 +1,9 @@
 'use client';
 
 import type { Container, Engine } from '@tsparticles/engine';
-import { loadPolygonMaskPlugin } from '@tsparticles/plugin-polygon-mask';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
 import { loadSlim } from '@tsparticles/slim';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { loadEvolutionUpdater } from './EvolutionUpdater';
 
 // Helper to extract theme colors
@@ -27,17 +26,11 @@ export const EntropyGridBackground = () => {
   const [colors, setColors] = useState({ foreground: '#888888', primary: '#ffffff' });
   const containerRef = useRef<Container | null>(null);
 
-  // Custom states for interaction
-  const [isCrystalActive, setIsCrystalActive] = useState(false);
-  const [crystalPos, setCrystalPos] = useState({ x: 50, y: 50 }); // percentages
-
   // Initialize engine
   useEffect(() => {
     initParticlesEngine(async (engine: Engine) => {
       // Load the slim package (shapes, links, move, life)
       await loadSlim(engine);
-      // Load the polygon mask plugin for the crystal structure
-      await loadPolygonMaskPlugin(engine);
       await loadEvolutionUpdater(engine);
     }).then(() => {
       setInit(true);
@@ -77,16 +70,7 @@ export const EntropyGridBackground = () => {
       },
       fpsLimit: 60,
       interactivity: {
-        events: {
-          onHover: {
-            // When crystal is active, it attracts particles
-            enable: isCrystalActive,
-            mode: 'attract',
-            parallax: {
-              enable: false,
-            },
-          },
-        },
+        events: {},
         modes: {
           attract: {
             distance: 800,
@@ -105,9 +89,9 @@ export const EntropyGridBackground = () => {
         },
         links: {
           color: colors.primary,
-          distance: isCrystalActive ? 150 : 60, // Longer links when captured
+          distance: 60,
           enable: true,
-          opacity: isCrystalActive ? 0.8 : 0.4, // Brighter links when captured
+          opacity: 0.4,
           width: 1.5,
         },
         move: {
@@ -148,31 +132,6 @@ export const EntropyGridBackground = () => {
           },
         },
       },
-      // The "Entropy Grid" polygon mask
-      polygon: {
-        enable: false, // Temporarily disabled for baseline testing
-        type: 'inside', // Particles stay inside/on the path
-        move: {
-          radius: 10,
-        },
-        url: '', // We'll use inline SVG path
-        inline: {
-          // A simple Hexagon path
-          arrangement: 'equidistant',
-        },
-        draw: {
-          enable: false,
-        },
-        scale: 5,
-        position: {
-          x: crystalPos.x,
-          y: crystalPos.y,
-        },
-        data: {
-          path: 'M 50 0 L 100 25 L 100 75 L 50 100 L 0 75 L 0 25 Z',
-          size: { width: 100, height: 100 },
-        },
-      },
       detectRetina: true,
       emitters: {
         direction: 'none',
@@ -190,63 +149,14 @@ export const EntropyGridBackground = () => {
         },
       },
     };
-  }, [colors, isCrystalActive, crystalPos]);
-
-  const updateCrystalPos = useCallback(
-    (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
-      if ('clientX' in e) {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        setCrystalPos({ x, y });
-      }
-    },
-    []
-  );
-
-  // Interaction handlers
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      setIsCrystalActive(true);
-      console.log('Crystal Activated at', e.clientX, e.clientY);
-      updateCrystalPos(e);
-    },
-    [updateCrystalPos]
-  );
-
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!isCrystalActive) return;
-      updateCrystalPos(e);
-    },
-    [isCrystalActive, updateCrystalPos]
-  );
-
-  const handleMouseUp = useCallback(() => {
-    setIsCrystalActive(false);
-    console.log('Crystal Deactivated');
-  }, []);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      setIsCrystalActive((prev) => !prev);
-    }
-  }, []);
+  }, [colors]);
 
   if (!init) {
     return null; // Don't render until engine is ready
   }
 
   return (
-    <div
-      className="pointer-events-auto absolute inset-0 z-0 cursor-crosshair overflow-hidden"
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      onKeyDown={handleKeyDown}
-      role="none"
-    >
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       {/* 
         Removed blur for a sharper, modern tech aesthetic, 
         emphasizing the rigid geometric layout of the particles and links 
