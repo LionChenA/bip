@@ -1,7 +1,7 @@
 # Entropy Grid Physics
 
 ## Purpose
-Defines the underlying rigid, geometric particle network with basic physical collisions and sharp link rendering for the interactive background.
+Defines the underlying rigid, geometric particle network with basic physical collisions and sharp link rendering for the evolutionary background.
 
 ## Requirements
 
