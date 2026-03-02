@@ -56,6 +56,7 @@ export class EvolutionUpdater implements IParticleUpdater {
     if (!this.isEnabled(particle) || !particle.evolutionConfig) return;
 
     const config = particle.evolutionConfig;
+    const mass = 1 + (config.maturity / config.maxMaturity) * 9; // Scales linearly from 1 (young) to 10 (mature)
     let links = (particle as any).links;
 
     // --- 1. OVERLOAD MECHANISM ---
@@ -65,7 +66,8 @@ export class EvolutionUpdater implements IParticleUpdater {
       (particle as any).links = [];
       config.connectionTime = 0;
       config.maturity = Math.max(0, config.maturity - 50);
-      particle.velocity.x += (Math.random() - 0.5) * 2;
+      particle.velocity.x += ((Math.random() - 0.5) * 2) / mass;
+      particle.velocity.y += ((Math.random() - 0.5) * 2) / mass;
       particle.velocity.y += (Math.random() - 0.5) * 2;
     }
 
@@ -136,8 +138,9 @@ export class EvolutionUpdater implements IParticleUpdater {
         if (distSq > 0 && distSq < 22500) {
           const dist = Math.sqrt(distSq);
           const repulseForce = (150 / (distSq + 100)) * delta.factor;
-          particle.velocity.x += (dx / dist) * repulseForce;
-          particle.velocity.y += (dy / dist) * repulseForce;
+          const actualForce = Math.min(repulseForce, 2.0); // Clamp to prevent slingshotting
+          particle.velocity.x += ((dx / dist) * actualForce) / mass;
+          particle.velocity.y += ((dy / dist) * actualForce) / mass;
         }
       }
 
@@ -153,9 +156,10 @@ export class EvolutionUpdater implements IParticleUpdater {
 
           if (distSq > 0) {
             const dist = Math.sqrt(distSq);
-            const attractForce = dist * 0.0005 * delta.factor;
-            particle.velocity.x += (dx / dist) * attractForce;
-            particle.velocity.y += (dy / dist) * attractForce;
+            const attractForce = dist * 0.00115 * delta.factor;
+            const actualForce = Math.min(attractForce, 2.0); // Clamp to prevent slingshotting
+            particle.velocity.x += ((dx / dist) * actualForce) / mass;
+            particle.velocity.y += ((dy / dist) * actualForce) / mass;
           }
         }
       }
