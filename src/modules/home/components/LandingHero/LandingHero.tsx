@@ -2,7 +2,6 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { siteConfig } from '@/modules/infra/data/siteConfig';
 import { CoordinateNav } from './CoordinateNav';
-import { EntropyGridBackground } from './EntropyGridBackground';
 import { FluxSlogan } from './FluxSlogan';
 
 export const LandingHero: React.FC = () => {
@@ -17,11 +16,7 @@ export const LandingHero: React.FC = () => {
   const currentTitle = lang === 'zh' ? siteConfig.title.zh : siteConfig.title.en;
 
   return (
-    <section className="relative flex min-h-screen w-full flex-col justify-center overflow-hidden bg-background">
-      <div className="absolute inset-0 z-0">
-        <EntropyGridBackground />
-      </div>
-
+    <section className="relative flex min-h-screen w-full flex-col justify-center overflow-hidden bg-transparent">
       <div className="container pointer-events-none relative z-10 mx-auto flex h-full flex-col justify-center px-6">
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-12 mb-12 flex flex-col items-center text-center">

@@ -1,10 +1,5 @@
 ---
-import { ClientRouter } from 'astro:transitions';
-import '@fontsource/geist-sans';
-import '@fontsource/maple-mono';
-import SEO from '@/modules/infra/components/SEO.astro';
-import ThemeProvider from '@/modules/infra/components/ThemeProvider.astro';
-import '@/styles/global.css';
+import RootLayout from '@/modules/infra/layouts/RootLayout.astro';
 
 interface Props {
   title?: string;
@@ -16,13 +11,8 @@ interface Props {
 const { title, description, image, lang = 'en' } = Astro.props;
 ---
 
-<html lang={lang}>
-	<head>
-        <SEO title={title} description={description} image={image} />
-        <ClientRouter />
-        <ThemeProvider />
-	</head>
-	<body class="min-h-screen font-sans antialiased bg-background text-foreground transition-colors duration-300 overflow-hidden">
+<RootLayout title={title} description={description} image={image} lang={lang} bodyClass="overflow-hidden">
+    <div class="relative z-0 h-full w-full">
         <slot />
-	</body>
-</html>
+    </div>
+</RootLayout>

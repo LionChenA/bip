@@ -11,7 +11,7 @@
   const applyTheme = (preference) => {
     const effectiveTheme = getEffectiveTheme(preference);
     
-    // Toggle 'dark' class
+    // Toggle 'dark' class IMMEDIATELY to prevent white flash
     if (effectiveTheme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
@@ -45,7 +45,7 @@
     applyTheme(savedPreference);
   };
 
-  // Run on initial load
+  // Run on initial load synchronously before body is rendered
   initTheme();
 
   // Run on View Transitions (Astro specific)
