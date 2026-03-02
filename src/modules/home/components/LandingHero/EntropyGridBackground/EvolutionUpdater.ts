@@ -1,4 +1,18 @@
-import type { Container, Engine, IParticleUpdater, Particle } from '@tsparticles/engine';
+import type { Container, Engine, IDelta, IParticleUpdater, Particle } from '@tsparticles/engine';
+
+declare module '@tsparticles/engine' {
+  interface Particle {
+    links?: { destination: Particle }[];
+  }
+
+  interface IParticleHslAnimation {
+    value?: string | string[];
+  }
+
+  interface Particles {
+    array: Particle[];
+  }
+}
 
 // Extended particle type to hold our custom physics variables
 export type EvolutionParticle = Particle & {
@@ -25,7 +39,6 @@ export class EvolutionUpdater implements IParticleUpdater {
   }
 
   init(particle: EvolutionParticle): void {
-    // Increase probability slightly for observability, and guarantee at least one occasionally
     // Black swans can ONLY be born during the respawn phase when the system is stagnant. Never on initial load.
     const isBlackSwan = false;
 
@@ -47,159 +60,36 @@ export class EvolutionUpdater implements IParticleUpdater {
       particle.velocity.x *= 2;
       particle.velocity.y *= 2;
       if (particle.color) {
-        (particle.color as any).value = '#ef4444'; // Tailwind red-500
+        particle.color.value = '#ef4444'; // Tailwind red-500
       }
     }
   }
 
-  update(particle: EvolutionParticle, delta: { value: number; factor: number }): void {
+  update(particle: EvolutionParticle, delta: IDelta): void {
     if (!this.isEnabled(particle) || !particle.evolutionConfig) return;
 
     const config = particle.evolutionConfig;
     const mass = 1 + (config.maturity / config.maxMaturity) * 9; // Scales linearly from 1 (young) to 10 (mature)
-    let links = (particle as any).links;
+    const allParticles = this.container.particles.array as EvolutionParticle[];
 
     // --- 1. OVERLOAD MECHANISM ---
-    const MAX_CONNECTIONS = 6;
-    if (links && links.length > MAX_CONNECTIONS) {
-      links = [];
-      (particle as any).links = [];
-      config.connectionTime = 0;
-      config.maturity = Math.max(0, config.maturity - 50);
-      particle.velocity.x += ((Math.random() - 0.5) * 2) / mass;
-      particle.velocity.y += ((Math.random() - 0.5) * 2) / mass;
-      particle.velocity.y += (Math.random() - 0.5) * 2;
-    }
+    this.applyCrowdingOverload(particle, config, mass);
 
-    const hasLinks = links && links.length > 0;
+    const hasLinks = !!(particle.links && particle.links.length > 0);
 
     // --- 2. BLACK SWAN HOMING & DECAY ---
     if (config.isBlackSwan) {
-      // Delta-corrected friction: v_new = v_old * (1 - friction * dt)
-      // Base friction is say 2% per frame at 60fps.
-      const friction = 0.98 ** delta.factor;
-      particle.velocity.x *= friction;
-      particle.velocity.y *= friction;
-
-      config.deathTimer -= 1 * delta.factor;
-      if (config.deathTimer <= 0) {
-        config.isBlackSwan = false;
-        config.hasHit = true;
-      }
-
-      let targetX = 0;
-      let targetY = 0;
-      let matureWeight = 0;
-
-      const allParticles = this.container.particles.filter(() => true) as EvolutionParticle[];
-      for (const p of allParticles) {
-        if (p !== particle && p.evolutionConfig && p.evolutionConfig.maturity > 50) {
-          targetX += p.position.x * p.evolutionConfig.maturity;
-          targetY += p.position.y * p.evolutionConfig.maturity;
-          matureWeight += p.evolutionConfig.maturity;
-        }
-      }
-
-      if (matureWeight > 0) {
-        targetX /= matureWeight;
-        targetY /= matureWeight;
-
-        const dx = targetX - particle.position.x;
-        const dy = targetY - particle.position.y;
-        const distSq = dx * dx + dy * dy;
-
-        if (distSq > 0) {
-          const dist = Math.sqrt(distSq);
-          // Homing force correctly multiplied by delta
-          const steeringForce = 0.5 * delta.factor;
-          particle.velocity.x += (dx / dist) * steeringForce;
-          particle.velocity.y += (dy / dist) * steeringForce;
-
-          const speed = Math.sqrt(particle.velocity.x ** 2 + particle.velocity.y ** 2);
-          if (speed > config.baseSpeed * 2) {
-            particle.velocity.x = (particle.velocity.x / speed) * config.baseSpeed * 2;
-            particle.velocity.y = (particle.velocity.y / speed) * config.baseSpeed * 2;
-          }
-        }
-      }
+      this.applyBlackSwanHoming(particle, config, delta, allParticles);
     }
 
     // --- 3. FORCE-DIRECTED PHYSICS ---
     if (!config.isBlackSwan) {
-      const allParticles = this.container.particles.filter(() => true) as EvolutionParticle[];
-      for (const other of allParticles) {
-        if (other === particle || other.destroyed) continue;
-
-        const dx = particle.position.x - other.position.x;
-        const dy = particle.position.y - other.position.y;
-        const distSq = dx * dx + dy * dy;
-
-        // REPULSION
-        if (distSq > 0 && distSq < 22500) {
-          const dist = Math.sqrt(distSq);
-          const repulseForce = (150 / (distSq + 100)) * delta.factor;
-          const actualForce = Math.min(repulseForce, 2.0); // Clamp to prevent slingshotting
-          particle.velocity.x += ((dx / dist) * actualForce) / mass;
-          particle.velocity.y += ((dy / dist) * actualForce) / mass;
-        }
-      }
-
-      // ATTRACTION (Links)
-      if (hasLinks) {
-        for (const link of links) {
-          const other = link.destination as EvolutionParticle;
-          if (!other || other.destroyed) continue;
-
-          const dx = other.position.x - particle.position.x;
-          const dy = other.position.y - particle.position.y;
-          const distSq = dx * dx + dy * dy;
-
-          if (distSq > 0) {
-            const dist = Math.sqrt(distSq);
-            const attractForce = dist * 0.00115 * delta.factor;
-            const actualForce = Math.min(attractForce, 2.0); // Clamp to prevent slingshotting
-            particle.velocity.x += ((dx / dist) * actualForce) / mass;
-            particle.velocity.y += ((dy / dist) * actualForce) / mass;
-          }
-        }
-      }
+      this.applyIntermolecularForces(particle, delta, allParticles, mass, hasLinks);
     }
 
     // --- 4. SHATTER EVENT (Collision Check) ---
     if (config.isBlackSwan) {
-      const particles = this.container.particles.filter(() => true) as EvolutionParticle[];
-      for (const other of particles) {
-        if (
-          other === particle ||
-          other.destroyed ||
-          !other.evolutionConfig ||
-          other.evolutionConfig.isBlackSwan
-        )
-          continue;
-
-        if (other.evolutionConfig.maturity > 50) {
-          const dx = particle.position.x - other.position.x;
-          const dy = particle.position.y - other.position.y;
-          const distSq = dx * dx + dy * dy;
-
-          if (distSq < 25000) {
-            other.evolutionConfig.maturity = 0;
-            other.evolutionConfig.deathTimer = 10;
-            if ((other as any).links) (other as any).links = [];
-
-            // Massive kinetic injection
-            const explosionForce = 150 / Math.max(Math.sqrt(distSq), 10);
-            const actualForce = Math.min(explosionForce, 5); // Hard cap
-            other.velocity.x = -dx * actualForce + (Math.random() - 0.5) * 2;
-            other.velocity.y = -dy * actualForce + (Math.random() - 0.5) * 2;
-
-            if (other.color) (other.color as any).value = '#fbbf24';
-            if (other.size) other.size.value = 5;
-
-            particle.evolutionConfig.hasHit = true;
-          }
-        }
-      }
+      this.checkBlackSwanDetonation(particle, config, allParticles);
     }
 
     if (config.hasHit) {
@@ -209,6 +99,170 @@ export class EvolutionUpdater implements IParticleUpdater {
     }
 
     // --- 5. EVOLUTION & LIFECYCLE ---
+    this.updateLifecycle(particle, config, delta, hasLinks, allParticles);
+  }
+
+  private applyCrowdingOverload(
+    particle: EvolutionParticle,
+    config: NonNullable<EvolutionParticle['evolutionConfig']>,
+    mass: number
+  ): void {
+    const MAX_CONNECTIONS = 6;
+    if (particle.links && particle.links.length > MAX_CONNECTIONS) {
+      particle.links = [];
+      config.connectionTime = 0;
+      config.maturity = Math.max(0, config.maturity - 50);
+      particle.velocity.x += ((Math.random() - 0.5) * 2) / mass;
+      particle.velocity.y += ((Math.random() - 0.5) * 2) / mass;
+      particle.velocity.y += (Math.random() - 0.5) * 2;
+    }
+  }
+
+  private applyBlackSwanHoming(
+    particle: EvolutionParticle,
+    config: NonNullable<EvolutionParticle['evolutionConfig']>,
+    delta: IDelta,
+    allParticles: EvolutionParticle[]
+  ): void {
+    // Delta-corrected friction: v_new = v_old * (1 - friction * dt)
+    const friction = 0.98 ** delta.factor;
+    particle.velocity.x *= friction;
+    particle.velocity.y *= friction;
+
+    config.deathTimer -= 1 * delta.factor;
+    if (config.deathTimer <= 0) {
+      config.isBlackSwan = false;
+      config.hasHit = true;
+    }
+
+    let targetX = 0;
+    let targetY = 0;
+    let matureWeight = 0;
+
+    for (const p of allParticles) {
+      if (p !== particle && p.evolutionConfig && p.evolutionConfig.maturity > 50) {
+        targetX += p.position.x * p.evolutionConfig.maturity;
+        targetY += p.position.y * p.evolutionConfig.maturity;
+        matureWeight += p.evolutionConfig.maturity;
+      }
+    }
+
+    if (matureWeight > 0) {
+      targetX /= matureWeight;
+      targetY /= matureWeight;
+
+      const dx = targetX - particle.position.x;
+      const dy = targetY - particle.position.y;
+      const distSq = dx * dx + dy * dy;
+
+      if (distSq > 0) {
+        const dist = Math.sqrt(distSq);
+        const steeringForce = 0.5 * delta.factor;
+        particle.velocity.x += (dx / dist) * steeringForce;
+        particle.velocity.y += (dy / dist) * steeringForce;
+
+        const speed = Math.sqrt(particle.velocity.x ** 2 + particle.velocity.y ** 2);
+        if (speed > config.baseSpeed * 2) {
+          particle.velocity.x = (particle.velocity.x / speed) * config.baseSpeed * 2;
+          particle.velocity.y = (particle.velocity.y / speed) * config.baseSpeed * 2;
+        }
+      }
+    }
+  }
+
+  private applyIntermolecularForces(
+    particle: EvolutionParticle,
+    delta: IDelta,
+    allParticles: EvolutionParticle[],
+    mass: number,
+    hasLinks: boolean
+  ): void {
+    for (const other of allParticles) {
+      if (other === particle || other.destroyed) continue;
+
+      const dx = particle.position.x - other.position.x;
+      const dy = particle.position.y - other.position.y;
+      const distSq = dx * dx + dy * dy;
+
+      // REPULSION
+      if (distSq > 0 && distSq < 22500) {
+        const dist = Math.sqrt(distSq);
+        const repulseForce = (150 / (distSq + 100)) * delta.factor;
+        const actualForce = Math.min(repulseForce, 2.0); // Clamp to prevent slingshotting
+        particle.velocity.x += ((dx / dist) * actualForce) / mass;
+        particle.velocity.y += ((dy / dist) * actualForce) / mass;
+      }
+    }
+
+    // ATTRACTION (Links)
+    if (hasLinks && particle.links) {
+      for (const link of particle.links) {
+        const other = link.destination as EvolutionParticle;
+        if (!other || other.destroyed) continue;
+
+        const dx = other.position.x - particle.position.x;
+        const dy = other.position.y - particle.position.y;
+        const distSq = dx * dx + dy * dy;
+
+        if (distSq > 0) {
+          const dist = Math.sqrt(distSq);
+          const attractForce = dist * 0.00115 * delta.factor;
+          const actualForce = Math.min(attractForce, 2.0); // Clamp to prevent slingshotting
+          particle.velocity.x += ((dx / dist) * actualForce) / mass;
+          particle.velocity.y += ((dy / dist) * actualForce) / mass;
+        }
+      }
+    }
+  }
+
+  private checkBlackSwanDetonation(
+    particle: EvolutionParticle,
+    config: NonNullable<EvolutionParticle['evolutionConfig']>,
+    allParticles: EvolutionParticle[]
+  ): void {
+    for (const other of allParticles) {
+      if (
+        other === particle ||
+        other.destroyed ||
+        !other.evolutionConfig ||
+        other.evolutionConfig.isBlackSwan
+      )
+        continue;
+
+      if (other.evolutionConfig.maturity > 50) {
+        const dx = particle.position.x - other.position.x;
+        const dy = particle.position.y - other.position.y;
+        const distSq = dx * dx + dy * dy;
+
+        if (distSq < 25000) {
+          other.evolutionConfig.maturity = 0;
+          other.evolutionConfig.deathTimer = 10;
+          if (other.links) other.links = [];
+
+          // Massive kinetic injection
+          const explosionForce = 150 / Math.max(Math.sqrt(distSq), 10);
+          const actualForce = Math.min(explosionForce, 5); // Hard cap
+          other.velocity.x = -dx * actualForce + (Math.random() - 0.5) * 2;
+          other.velocity.y = -dy * actualForce + (Math.random() - 0.5) * 2;
+
+          if (other.color) {
+            other.color.value = '#fbbf24';
+          }
+          if (other.size) other.size.value = 5;
+
+          config.hasHit = true;
+        }
+      }
+    }
+  }
+
+  private updateLifecycle(
+    particle: EvolutionParticle,
+    config: NonNullable<EvolutionParticle['evolutionConfig']>,
+    delta: IDelta,
+    hasLinks: boolean,
+    allParticles: EvolutionParticle[]
+  ): void {
     if (hasLinks) {
       config.connectionTime += 1 * delta.factor;
     } else {
@@ -227,7 +281,6 @@ export class EvolutionUpdater implements IParticleUpdater {
       const maturityRatio = config.maturity / config.maxMaturity;
       if (particle.size) {
         const targetSize = config.baseSize + maturityRatio * 2.5;
-        // Proper LERP with delta
         const lerpFactor = 1 - 0.98 ** delta.factor;
         particle.size.value =
           (particle.size.value as number) + (targetSize - particle.size.value) * lerpFactor;
@@ -258,12 +311,10 @@ export class EvolutionUpdater implements IParticleUpdater {
       const currentSpeed = Math.sqrt(particle.velocity.x ** 2 + particle.velocity.y ** 2);
 
       if (currentSpeed < config.baseSpeed) {
-        // Delta-corrected acceleration
         const accel = 1.05 ** delta.factor;
         particle.velocity.x *= accel;
         particle.velocity.y *= accel;
       } else if (currentSpeed > config.baseSpeed * 1.5) {
-        // Delta-corrected global cooling friction for explosion fragments
         const cooling = 0.96 ** delta.factor; // 4% friction
         particle.velocity.x *= cooling;
         particle.velocity.y *= cooling;
@@ -290,8 +341,8 @@ export class EvolutionUpdater implements IParticleUpdater {
       }
 
       if (config.deathTimer <= 0) {
-        particle.position.x = Math.random() * (particle.container.canvas.size.width || 800);
-        particle.position.y = Math.random() * (particle.container.canvas.size.height || 800);
+        particle.position.x = Math.random() * (this.container.canvas.size.width || 800);
+        particle.position.y = Math.random() * (this.container.canvas.size.height || 800);
 
         config.deathTimer = config.maxDeathTimer;
         config.maturity = 0;
@@ -300,7 +351,6 @@ export class EvolutionUpdater implements IParticleUpdater {
         if (particle.opacity) particle.opacity.value = 0;
         if (particle.size) particle.size.value = 0;
 
-        const allParticles = this.container.particles.filter(() => true) as EvolutionParticle[];
         let matureCount = 0;
         let swanCount = 0;
         for (const p of allParticles) {
@@ -319,9 +369,16 @@ export class EvolutionUpdater implements IParticleUpdater {
         if (config.isBlackSwan) {
           particle.velocity.x *= 4;
           particle.velocity.y *= 4;
-          if (particle.color) (particle.color as any).value = '#ef4444';
+          if (particle.color) {
+            particle.color.value = '#ef4444';
+          }
         } else {
-          if (particle.color) (particle.color as any).value = particle.options.color.value;
+          if (particle.color) {
+            const colorValue = particle.options.color.value;
+            if (typeof colorValue === 'string') {
+              particle.color.value = colorValue;
+            }
+          }
         }
       }
     }
