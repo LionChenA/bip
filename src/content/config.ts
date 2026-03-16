@@ -32,4 +32,19 @@ const portfolio = defineCollection({
   }),
 });
 
-export const collections = { portfolio, garden };
+const learning = defineCollection({
+  type: 'content',
+  schema: z.object({
+    moduleId: z.string(),
+    courseId: z.string(),
+    courseName: z.string(),
+    status: z.enum(['not_started', 'in_progress', 'completed', 'reviewed']).default('not_started'),
+    isPublic: z.boolean().default(false),
+    title: z.string(),
+    description: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    completedDate: z.coerce.date().optional(),
+  }),
+});
+
+export const collections = { portfolio, garden, learning };
