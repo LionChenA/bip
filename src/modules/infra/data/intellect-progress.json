@@ -1,0 +1,50 @@
+{
+  "totalCourses": 2,
+  "totalItems": 5,
+  "completedItems": 3,
+  "overallProgress": 60,
+  "lastUpdated": "2026-03-16T17:54:55.296Z",
+  "courses": [
+    {
+      "courseId": "cs61a",
+      "courseName": "Structure and Interpretation of Computer Programs",
+      "totalItems": 3,
+      "completedItems": 3,
+      "progress": 100,
+      "recentItems": [
+        {
+          "slug": "lecture-01-functions",
+          "title": "CS61A Lecture 1: Functions",
+          "status": "completed",
+          "completedDate": "2026-01-15"
+        },
+        {
+          "slug": "lecture-02-hof",
+          "title": "CS61A Lecture 2: Higher-Order Functions",
+          "status": "completed",
+          "completedDate": "2026-01-22"
+        },
+        {
+          "slug": "project-01-hog",
+          "title": "CS61A Project 1: The Game of Hog",
+          "status": "completed",
+          "completedDate": "2026-02-01"
+        }
+      ]
+    },
+    {
+      "courseId": "cs188",
+      "courseName": "Artificial Intelligence: Principles & Techniques",
+      "totalItems": 2,
+      "completedItems": 0,
+      "progress": 0,
+      "recentItems": [
+        {
+          "slug": "lecture-01-intro",
+          "title": "CS188 Lecture 1: Introduction to AI",
+          "status": "in_progress"
+        }
+      ]
+    }
+  ]
+}
