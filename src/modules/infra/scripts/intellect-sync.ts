@@ -222,7 +222,7 @@ export function generateIntellectProgress(): IntellectSummary {
 
   const courseDirs = fs
     .readdirSync(contentDir, { withFileTypes: true })
-    .filter((dir) => dir.isDirectory());
+    .filter((dir) => dir.isDirectory() && !dir.name.startsWith('.') && dir.name !== 'scripts');
 
   const courses: CourseProgress[] = [];
   let totalItems = 0;
@@ -236,71 +236,78 @@ export function generateIntellectProgress(): IntellectSummary {
     const defaultCourseName = courseDir.name.replace(/-.+$/, '');
 
     // Determine if using new .tutor/module.json format or legacy frontmatter
-    const isNewFormat =
-      fs.existsSync(path.join(coursePath, 'cs188')) ||
-      fs.existsSync(path.join(coursePath, 'cs61a'));
+    // Check for nested course structure (lectures/homeworks/projects subdirs)
+    const hasNestedModules =
+      fs.existsSync(path.join(coursePath, 'lectures')) ||
+      fs.existsSync(path.join(coursePath, 'homeworks')) ||
+      fs.existsSync(path.join(coursePath, 'projects'));
 
-    if (isNewFormat) {
-      // New format: traverse subdirectories looking for .tutor/module.json
-      const moduleDirs = fs
-        .readdirSync(coursePath, { withFileTypes: true })
-        .filter((dir) => dir.isDirectory());
+    if (hasNestedModules) {
+      // Nested format: traverse lectures/, homeworks/, projects/ subdirectories
+      const moduleTypes = ['lectures', 'homeworks', 'projects'];
 
       let courseTotal = 0;
       let courseCompleted = 0;
       const recentItems: CourseProgress['recentItems'] = [];
 
-      for (const moduleDir of moduleDirs) {
-        const modulePath = path.join(coursePath, moduleDir.name);
-        const tutorModule = loadModuleFromTutorJson(modulePath);
+      for (const moduleType of moduleTypes) {
+        const typeDir = path.join(coursePath, moduleType);
+        if (!fs.existsSync(typeDir)) continue;
 
-        if (tutorModule) {
-          courseTotal++;
-          totalItems++;
+        const moduleDirs = fs
+          .readdirSync(typeDir, { withFileTypes: true })
+          .filter((dir) => dir.isDirectory());
 
-          const normalizedStatus = normalizeStatus(tutorModule.status);
-          const moduleType = inferTypeFromModuleId(tutorModule.id);
+        for (const moduleDir of moduleDirs) {
+          const modulePath = path.join(typeDir, moduleDir.name);
+          const tutorModule = loadModuleFromTutorJson(modulePath);
 
-          if (normalizedStatus === 'completed' || normalizedStatus === 'reviewed') {
-            courseCompleted++;
-            completedItems++;
-          }
-
-          if (normalizedStatus === 'completed' || normalizedStatus === 'in_progress') {
-            recentItems.push({
-              slug: tutorModule.id,
-              title: tutorModule.title,
-              status: normalizedStatus,
-              completedDate: tutorModule.completedDate,
-            });
-          }
-        } else {
-          // Fallback: check for markdown files with frontmatter
-          const files = fs
-            .readdirSync(modulePath)
-            .filter((f) => f.endsWith('.md') || f.endsWith('.mdx'));
-          for (const file of files) {
-            const filePath = path.join(modulePath, file);
-            const content = fs.readFileSync(filePath, 'utf-8');
-            const fm = parseFrontmatter(content);
-
-            if (!fm) continue;
-
+          if (tutorModule) {
             courseTotal++;
             totalItems++;
 
-            if (fm.status === 'completed' || fm.status === 'reviewed') {
+            const normalizedStatus = normalizeStatus(tutorModule.status);
+
+            if (normalizedStatus === 'completed' || normalizedStatus === 'reviewed') {
               courseCompleted++;
               completedItems++;
             }
 
-            if (fm.status === 'completed' || fm.status === 'in_progress') {
+            if (normalizedStatus === 'completed' || normalizedStatus === 'in_progress') {
               recentItems.push({
-                slug: getSlug(file),
-                title: fm.title,
-                status: fm.status,
-                completedDate: fm.completedDate,
+                slug: tutorModule.id,
+                title: tutorModule.title,
+                status: normalizedStatus,
+                completedDate: tutorModule.completedDate,
               });
+            }
+          } else {
+            const files = fs
+              .readdirSync(modulePath)
+              .filter((f) => f.endsWith('.md') || f.endsWith('.mdx'));
+            for (const file of files) {
+              const filePath = path.join(modulePath, file);
+              const content = fs.readFileSync(filePath, 'utf-8');
+              const fm = parseFrontmatter(content);
+
+              if (!fm) continue;
+
+              courseTotal++;
+              totalItems++;
+
+              if (fm.status === 'completed' || fm.status === 'reviewed') {
+                courseCompleted++;
+                completedItems++;
+              }
+
+              if (fm.status === 'completed' || fm.status === 'in_progress') {
+                recentItems.push({
+                  slug: getSlug(file),
+                  title: fm.title,
+                  status: fm.status,
+                  completedDate: fm.completedDate,
+                });
+              }
             }
           }
         }
