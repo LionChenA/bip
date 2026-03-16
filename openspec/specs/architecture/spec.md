@@ -46,3 +46,31 @@ The system SHALL support the following initial modules:
 - **WHEN** the project is initialized
 - **THEN** `src/modules/infra/` exists
 
+### Requirement: Intellectual Privacy Defense
+Sensitive educational resources (solutions, private notes) MUST be protected from public indexing.
+
+#### Scenario: Privacy Filtering
+- **WHEN** a content item is marked `isPublic: false`
+- **THEN** it MUST be excluded from search engines (No-Index)
+- **AND** SHALL be obfuscated or omitted from the public build output.
+
+#### Scenario: Encrypted Storage
+- **WHEN** private notes are synced from external course repository
+- **THEN** they MUST be encrypted at rest using age or openssl
+- **AND** decrypted only with user-provided password
+- **AND** never exposed in plaintext in the repository
+
+### Requirement: External Repository Sync
+The system SHALL support automated sync from external private GitHub repositories.
+
+#### Scenario: GitHub Action Sync
+- **WHEN** course content is updated in external private repository
+- **THEN** GitHub Action SHOULD pull the latest content
+- **AND** encrypt private notes before committing to BIP
+- **AND** generate progress data from `.tutor/module.json`
+
+#### Scenario: Sync Authentication
+- **WHEN** GitHub Action accesses external private repository
+- **THEN** it MUST use GitHub PAT (Personal Access Token) stored in secrets
+- **AND** the token MUST have `repo` scope for private repository access
+
