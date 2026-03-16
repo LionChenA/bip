@@ -1,5 +1,6 @@
 ---
 import { AboutContent } from '../../../modules/about/components/AboutContent';
+import intellectProgress from '../../../modules/infra/data/intellect-progress.json';
 import BaseLayout from '../../../modules/infra/layouts/BaseLayout.astro';
 
 export function getStaticPaths() {
@@ -11,6 +12,6 @@ const { lang } = Astro.params;
 
 <BaseLayout title="About" lang={lang}>
   <div class="py-12">
-    <AboutContent client:load lang={lang as 'en' | 'zh'} />
+    <AboutContent client:load lang={lang as 'en' | 'zh'} intellectProgress={intellectProgress} />
   </div>
 </BaseLayout>

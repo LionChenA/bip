@@ -4,9 +4,12 @@ import { buttonVariants } from '@/components/ui/button';
 import { t } from '@/lib/i18n';
 import { resume } from '@/modules/about/data/resume';
 import { siteConfig } from '@/modules/infra/data/siteConfig';
+import type { IntellectProgress } from './IntellectDashboard';
+import { IntellectDashboard } from './IntellectDashboard';
 
 interface AboutContentProps {
   lang: 'en' | 'zh';
+  intellectProgress?: IntellectProgress | null;
 }
 
 const container = {
@@ -24,7 +27,7 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
-export function AboutContent({ lang }: AboutContentProps) {
+export function AboutContent({ lang, intellectProgress }: AboutContentProps) {
   return (
     <motion.div
       variants={container}
@@ -33,7 +36,7 @@ export function AboutContent({ lang }: AboutContentProps) {
       className="grid grid-cols-1 gap-12 md:grid-cols-[280px_1fr]"
     >
       <Sidebar lang={lang} />
-      <MainContent lang={lang} />
+      <MainContent lang={lang} intellectProgress={intellectProgress} />
     </motion.div>
   );
 }
@@ -87,7 +90,13 @@ function Sidebar({ lang }: { lang: 'en' | 'zh' }) {
   );
 }
 
-function MainContent({ lang }: { lang: 'en' | 'zh' }) {
+function MainContent({
+  lang,
+  intellectProgress,
+}: {
+  lang: 'en' | 'zh';
+  intellectProgress?: IntellectProgress | null;
+}) {
   return (
     <motion.div variants={item} className="space-y-12">
       <section className="space-y-4">
@@ -120,6 +129,13 @@ function MainContent({ lang }: { lang: 'en' | 'zh' }) {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="font-bold text-2xl tracking-tight">
+          {lang === 'en' ? 'Learning Path' : '学习路径'}
+        </h2>
+        <IntellectDashboard lang={lang} progress={intellectProgress ?? null} />
       </section>
     </motion.div>
   );
