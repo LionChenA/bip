@@ -1,0 +1,13 @@
+{
+  "id": "CS188",
+  "title": "Introduction to Artificial Intelligence",
+  "provider": "UC Berkeley",
+  "url": "https://inst.eecs.berkeley.edu/~cs188/sp25/",
+  "textbook": "AIMD 4th Edition",
+  "textbook_url": "https://inst.eecs.berkeley.edu/~cs188/textbook/",
+  "expectations": {
+    "lectures": 28,
+    "homeworks": 10,
+    "projects": 6
+  }
+}
