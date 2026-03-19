@@ -1,0 +1,25 @@
+{
+  "id": "LEC03",
+  "type": "lecture",
+  "title": "A* Search and Heuristics",
+  "status": "pending",
+  "from": ["LEC02"],
+  "to": ["LEC04", "HW2", "P1"],
+  "resources": {
+    "video": { "url": "https://www.youtube.com/watch?v=Mlwrx7hbKPs", "has_subtitles": true },
+    "slides": { "url": "slides/cs188-sp25-lec03.pdf" },
+    "textbook": {
+      "url": "https://inst.eecs.berkeley.edu/~cs188/textbook/search/#14-informed-search",
+      "chapter": "1.4 Informed Search (A*)"
+    },
+    "reference": { "source": "AIMD 4th", "chapter": "Ch. 3.5-3.6" }
+  },
+  "subtitle_index": {
+    "topics": [
+      { "keyword": "A*", "timestamps": ["02:30", "15:45"] },
+      { "keyword": "heuristic", "timestamps": ["08:15", "22:30"] },
+      { "keyword": "admissible", "timestamps": ["10:00"] }
+    ]
+  },
+  "notes": "notes.md"
+}

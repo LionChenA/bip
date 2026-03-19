@@ -1,0 +1,24 @@
+{
+  "id": "LEC02",
+  "type": "lecture",
+  "title": "Uninformed Search",
+  "status": "pending",
+  "from": ["LEC01"],
+  "to": ["LEC03", "HW1", "P0"],
+  "resources": {
+    "video": { "url": "https://www.youtube.com/watch?v=-Wx0QSFYfIQ", "has_subtitles": true },
+    "slides": { "url": "slides/cs188-sp25-lec02.pdf" },
+    "textbook": {
+      "url": "https://inst.eecs.berkeley.edu/~cs188/textbook/search/#13-uninformed-search",
+      "chapter": "1.3 Uninformed Search"
+    }
+  },
+  "subtitle_index": {
+    "topics": [
+      { "keyword": "BFS", "timestamps": [] },
+      { "keyword": "DFS", "timestamps": [] },
+      { "keyword": "search", "timestamps": [] }
+    ]
+  },
+  "notes": "notes.md"
+}

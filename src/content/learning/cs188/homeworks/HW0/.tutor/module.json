@@ -1,0 +1,11 @@
+{
+  "id": "HW0",
+  "type": "homework",
+  "title": "Python Basics",
+  "status": "pending",
+  "from": ["LEC01"],
+  "to": [],
+  "resources": {
+    "description": { "url": "gradescope" }
+  }
+}

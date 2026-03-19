@@ -1,19 +1,27 @@
 {
-  "totalCourses": 1,
-  "totalItems": 1,
+  "totalCourses": 2,
+  "totalItems": 4,
   "completedItems": 0,
   "overallProgress": 0,
-  "lastUpdated": "2026-03-19T18:06:37.115Z",
+  "lastUpdated": "2026-03-19T21:50:49.979Z",
   "courses": [
     {
+      "courseId": "bip",
+      "courseName": "bip",
+      "totalItems": 0,
+      "completedItems": 0,
+      "progress": 0,
+      "recentItems": []
+    },
+    {
       "courseId": "cs188",
-      "courseName": "cs188",
-      "totalItems": 1,
+      "courseName": "Introduction to Artificial Intelligence",
+      "totalItems": 4,
       "completedItems": 0,
       "progress": 0,
       "recentItems": [
         {
-          "slug": "L1",
+          "slug": "LEC01",
           "title": "Introduction",
           "status": "in_progress"
         }
