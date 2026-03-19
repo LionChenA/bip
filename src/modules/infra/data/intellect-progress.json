@@ -21,7 +21,9 @@
       "progress": 0,
       "recentItems": [
         {
-          "slug": "LEC01",
+          "slug": "L1-introduction",
+          "module": "L1-introduction",
+          "fullPath": "lectures/L1-introduction",
           "title": "Introduction",
           "status": "in_progress"
         }

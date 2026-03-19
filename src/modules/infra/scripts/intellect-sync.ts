@@ -64,18 +64,22 @@ interface LearningFrontmatter {
   completedDate?: string;
 }
 
+interface RecentItem {
+  slug: string;
+  module: string;
+  fullPath: string;
+  title: string;
+  status: LearningStatus;
+  completedDate?: string;
+}
+
 interface CourseProgress {
   courseId: string;
   courseName: string;
   totalItems: number;
   completedItems: number;
   progress: number;
-  recentItems: {
-    slug: string;
-    title: string;
-    status: LearningStatus;
-    completedDate?: string;
-  }[];
+  recentItems: RecentItem[];
 }
 
 interface IntellectSummary {
@@ -307,7 +311,9 @@ export function generateIntellectProgress(): IntellectSummary {
 
             if (normalizedStatus === 'completed' || normalizedStatus === 'in_progress') {
               recentItems.push({
-                slug: tutorModule.id,
+                slug: moduleDir.name,
+                module: moduleDir.name,
+                fullPath: path.join(moduleType, moduleDir.name),
                 title: tutorModule.title,
                 status: normalizedStatus,
                 completedDate: tutorModule.completedDate,
@@ -333,8 +339,11 @@ export function generateIntellectProgress(): IntellectSummary {
               }
 
               if (fm.status === 'completed' || fm.status === 'in_progress') {
+                const slug = getSlug(file);
                 recentItems.push({
-                  slug: getSlug(file),
+                  slug,
+                  module: moduleDir.name,
+                  fullPath: path.join(moduleType, moduleDir.name),
                   title: fm.title,
                   status: fm.status,
                   completedDate: fm.completedDate,
@@ -386,6 +395,8 @@ export function generateIntellectProgress(): IntellectSummary {
         if (fm.status === 'completed' || fm.status === 'in_progress') {
           recentItems.push({
             slug,
+            module: slug,
+            fullPath: courseDir.name,
             title: fm.title,
             status: fm.status,
             completedDate: fm.completedDate,
