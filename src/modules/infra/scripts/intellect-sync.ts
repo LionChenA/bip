@@ -134,16 +134,45 @@ function inferTypeFromModuleId(moduleId: string): string {
 
 /**
  * Load syllabus.json to build courseId → courseName mapping
+ * Checks both course-level and root-level syllabus.json
  */
-function loadSyllabusMap(coursePath: string): Map<string, string> {
+function loadSyllabusMap(
+  coursePath: string,
+  rootSyllabusMap: Map<string, string> = new Map()
+): Map<string, string> {
+  // First try course-level syllabus
   const syllabusPath = path.join(coursePath, 'syllabus.json');
-  if (!fs.existsSync(syllabusPath)) return new Map();
+  if (fs.existsSync(syllabusPath)) {
+    try {
+      const syllabus: Syllabus = JSON.parse(fs.readFileSync(syllabusPath, 'utf-8'));
+      return new Map([[syllabus.id.toLowerCase(), syllabus.title]]);
+    } catch {
+      console.warn('Failed to parse syllabus.json:', syllabusPath);
+    }
+  }
+
+  // Fallback: check if courseId exists in root syllabus map
+  const courseDirName = path.basename(coursePath);
+  const courseId = courseDirName.replace(/-.+$/, '').toLowerCase();
+  if (rootSyllabusMap.has(courseId)) {
+    return new Map([[courseId, rootSyllabusMap.get(courseId)!]]);
+  }
+
+  return new Map();
+}
+
+/**
+ * Load root-level syllabus.json to build global courseId → courseName mapping
+ */
+function loadRootSyllabusMap(contentDir: string): Map<string, string> {
+  const rootSyllabusPath = path.join(contentDir, 'syllabus.json');
+  if (!fs.existsSync(rootSyllabusPath)) return new Map();
 
   try {
-    const syllabus: Syllabus = JSON.parse(fs.readFileSync(syllabusPath, 'utf-8'));
+    const syllabus: Syllabus = JSON.parse(fs.readFileSync(rootSyllabusPath, 'utf-8'));
     return new Map([[syllabus.id.toLowerCase(), syllabus.title]]);
   } catch {
-    console.warn('Failed to parse syllabus.json:', syllabusPath);
+    console.warn('Failed to parse root syllabus.json:', rootSyllabusPath);
     return new Map();
   }
 }
@@ -228,11 +257,14 @@ export function generateIntellectProgress(): IntellectSummary {
   let totalItems = 0;
   let completedItems = 0;
 
+  // Load root syllabus for courseId -> courseName mapping
+  const rootSyllabusMap = loadRootSyllabusMap(contentDir);
+
   for (const courseDir of courseDirs) {
     const coursePath = path.join(contentDir, courseDir.name);
 
-    // Load syllabus.json for course metadata (NEW)
-    const syllabusMap = loadSyllabusMap(coursePath);
+    // Load syllabus.json for course metadata
+    const syllabusMap = loadSyllabusMap(coursePath, rootSyllabusMap);
     const defaultCourseName = courseDir.name.replace(/-.+$/, '');
 
     // Determine if using new .tutor/module.json format or legacy frontmatter
