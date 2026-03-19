@@ -1,0 +1,38 @@
+{
+  "id": "L1",
+  "type": "lecture",
+  "title": "Introduction",
+  "status": "in-progress",
+  "from": [],
+  "to": [
+    "L2",
+    "HW0"
+  ],
+  "resources": {
+    "video": {
+      "url": "https://www.youtube.com/watch?v=Awv7S9HI0wM",
+      "has_subtitles": true,
+      "note": "Recording = Spring 2025 latest version"
+    },
+    "slides": {
+      "url": "slides/cs188-sp25-lec01.pdf"
+    },
+    "textbook": {
+      "url": "https://inst.eecs.berkeley.edu/~cs188/textbook/",
+      "chapter": "Overview"
+    }
+  },
+  "subtitle_index": {
+    "topics": [
+      {
+        "keyword": "AI",
+        "timestamps": []
+      },
+      {
+        "keyword": "agents",
+        "timestamps": []
+      }
+    ]
+  },
+  "notes": "notes.md"
+}
